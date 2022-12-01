@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkEquipmentStore", "NetworkEquipmentStore.csproj", "{92DFFB4A-FF1A-443C-A10A-109634BCA19C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92DFFB4A-FF1A-443C-A10A-109634BCA19C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92DFFB4A-FF1A-443C-A10A-109634BCA19C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92DFFB4A-FF1A-443C-A10A-109634BCA19C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92DFFB4A-FF1A-443C-A10A-109634BCA19C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6E1314E4-C9E1-427C-A98E-254A5505B511}
+	EndGlobalSection
+EndGlobal
