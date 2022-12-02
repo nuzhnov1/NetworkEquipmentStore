@@ -113,7 +113,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\NetworkEquipmentStore.Master.css" />
+    <Content Include="Content\Products.css" />
     <Content Include="Global.asax" />
+    <Content Include="Pages\Products.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -127,12 +130,28 @@
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\PermissionsLevel.cs" />
     <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\ProductCategory.cs" />
     <Compile Include="Models\Repository\Repository.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Pages\NetworkEquipmentStore.Master.cs">
+      <DependentUpon>NetworkEquipmentStore.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\NetworkEquipmentStore.Master.designer.cs">
+      <DependentUpon>NetworkEquipmentStore.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Products.aspx.cs">
+      <DependentUpon>Products.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Products.aspx.designer.cs">
+      <DependentUpon>Products.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Pages\NetworkEquipmentStore.Master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

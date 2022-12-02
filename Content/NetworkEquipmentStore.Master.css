@@ -1,0 +1,99 @@
+﻿body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding-bottom: 30px;
+    font-family: Cambria, Georgia, "Times New Roman";
+}
+
+
+div#topnav {
+    position: sticky;
+    top: 0;
+    border-bottom: 3px solid #111;
+    background-color: #333;
+    font-size: large;
+    font-style: oblique;
+}
+
+div#header {
+    padding-bottom: 2px;
+    border-bottom: 3px solid #111;
+    color: white;
+    font-size: xx-large;
+    font-style: normal;
+    text-align: center;
+}
+
+div#topnav ul#topnavList {
+    margin: 0;
+    padding: 2px 0;
+    overflow: hidden;
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    text-align: center;
+}
+
+ul#topnavList li {
+    float: left;
+    display: inline-block;
+    list-style: none;
+}
+
+ul#topnavList li#dropdown {
+    float: right;
+}
+
+ul#topnavList li a, li#dropdown a, li#dropdown span {
+    margin: 0;
+    padding: 0px 16px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+li#dropdown div#DropdownContent {
+    margin: 0;
+    padding: 0;
+    border: none;
+    display: none;
+}
+
+div#DropdownContent input[type=button] {
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: inherit;
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+li#dropdown:hover div#DropdownContent {
+    display: block;
+}
+
+ul#topnavList li a:hover, li#dropdown span:hover, li#dropdown a:hover, div#DropdownContent input[type="button"]:hover {
+    color: aqua;
+}
+
+
+div#body-DropdownContent {
+    box-sizing: border-box;
+    font-size: medium;
+    font-style: normal;
+    float: left;
+    padding: 10px 10px 20px 10px;
+}
+
+
+footer#copyright {
+    text-align: center;
+}
+
+footer#copyright span:not(span:last-child) {
+    display: block;
+    margin-bottom: 10px;
+}

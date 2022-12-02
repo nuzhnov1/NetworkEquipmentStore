@@ -28,6 +28,7 @@ namespace NetworkEquipmentStore.Models.DAO
                 ID = id,
                 Name = row["name"].ToString(),
                 Description = row["description"].ToString(),
+                Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
                 ImagePath = $"Content/images/{row["image"]}.png",
                 Price = decimal.Parse(row["price"].ToString(), System.Globalization.NumberStyles.Currency),
                 Quantity = int.Parse(row["quantity"].ToString())
@@ -47,6 +48,7 @@ namespace NetworkEquipmentStore.Models.DAO
                     ID = int.Parse(row["id"].ToString()),
                     Name = row["name"].ToString(),
                     Description = row["description"].ToString(),
+                    Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
                     ImagePath = $"Content/images/{row["image"]}.png",
                     Price = decimal.Parse(row["price"].ToString(), System.Globalization.NumberStyles.Currency),
                     Quantity = int.Parse(row["quantity"].ToString())
@@ -64,11 +66,12 @@ namespace NetworkEquipmentStore.Models.DAO
             {
                 string name = product.Name;
                 string description = product.Description;
+                ProductCategory category = product.Category;
                 string imageGUID = Regex.Match(product.Name, "Content/images/(.*).png").Groups[1].Value;
                 decimal price = product.Price;
                 int quantity = product.Quantity;
 
-                string query = $"INSERT INTO ShopProduct(name, description, image, price, quantity) VALUES ('{name}', '{description}', '{imageGUID}', {price}, {quantity});";
+                string query = $"INSERT INTO ShopProduct(name, description, category, image, price, quantity) VALUES ('{name}', '{description}', '{category}', '{imageGUID}', {price}, {quantity});";
                 Database.Execute(query);
             }
         }
@@ -80,11 +83,12 @@ namespace NetworkEquipmentStore.Models.DAO
                 int id = product.ID;
                 string name = product.Name;
                 string description = product.Description;
+                ProductCategory category = product.Category;
                 string imageGUID = Regex.Match(product.Name, "Content/images/(.*).png").Groups[1].Value;
                 decimal price = product.Price;
                 int quantity = product.Quantity;
 
-                string query = $"UPDATE ShopProduct SET name = '{name}', description = '{description}', image = '{imageGUID}', price = {price}, quantity = {quantity} WHERE id = {id};";
+                string query = $"UPDATE ShopProduct SET name = '{name}', description = '{description}', category = '{category}', image = '{imageGUID}', price = {price}, quantity = {quantity} WHERE id = {id};";
                 Database.Execute(query);
             }
         }

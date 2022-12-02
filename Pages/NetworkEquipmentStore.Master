@@ -1,0 +1,44 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="NetworkEquipmentStore.master.cs" Inherits="NetworkEquipmentStore.Pages.NetworkEquipmentStore" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Интернет-магазин "Сетевое оборудование"</title>
+    <link rel="stylesheet" href="/Content/NetworkEquipmentStore.Master.css" />
+    <link rel="stylesheet" href="/Content/Products.css" />
+</head>
+<body>
+    <div id="root">
+        <form id="Form1" runat="server">
+            <div id="topnav">
+                <div id="header">Интернет-магазин "Сетевое оборудование"</div>
+                <ul id="topnavList">
+                    <li><asp:HyperLink runat="server" ID="Cart" NavigateUrl="/Pages/Cart.aspx" Text="Корзина" /></li>
+                    <li><asp:HyperLink runat="server" ID="Orders" NavigateUrl="/Pages/Orders.aspx" Text="Список заказов" /></li>
+                    <li><asp:HyperLink runat="server" ID="Clients" NavigateUrl="/Pages/Clients.aspx" Text="Клиенты" /></li>
+                    <li id="dropdown">
+                        <asp:HyperLink runat="server" ID="LoginLink" NavigateUrl="/Pages/Authorization.aspx" Text="Войти" />
+                        <asp:Label runat="server" ID="UsernameLabel" />
+                        <div id="DropdownContent" runat="server">
+                            <asp:Button runat="server" ID="ExitButton" OnClick="ExitButton_Click" Text="Выйти" type="button" UseSubmitBehavior="false" />
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="body-content">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+            </div>
+            <div style="width: 100%;">
+                <hr/>
+            </div>
+            <footer id="copyright">
+                <span>&copy; <%: DateTime.Now.Year %>. Made by sunman24.</span>
+                <span>Курсовой проект студента Нужнова А.Н. группы АВТ-917 факультета АВТФ НГТУ.</span>
+                <span>Интернет-магазин "Сетевое оборудование"</span>
+            </footer>
+        </form>
+    </div>
+</body>
+</html>

@@ -17,6 +17,7 @@ namespace NetworkEquipmentStore.Models.DAO
                 $"  sp.id AS id," +
                 $"  name," +
                 $"  description," +
+                $"  category," +
                 $"  image," +
                 $"  price," +
                 $"  sp.quantity AS total_quantity, " +
@@ -36,6 +37,7 @@ namespace NetworkEquipmentStore.Models.DAO
                         ID = int.Parse(row["id"].ToString()),
                         Name = row["name"].ToString(),
                         Description = row["description"].ToString(),
+                        Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
                         ImagePath = $"Content/images/{row["image"]}.png",
                         Price = decimal.Parse(row["price"].ToString()),
                         Quantity = int.Parse(row["total_quantity"].ToString())
