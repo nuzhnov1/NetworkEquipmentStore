@@ -1,59 +1,140 @@
-﻿div#content {
-    border-left: 2px solid gray;
-    margin-left: 9em;
-    padding: 1em;
+﻿div#products-root {
+    width: 100%;
+    display: table;
+    border-bottom: 3px solid #111;
 }
 
-div#categories {
-    float: left;
-    width: 8em;
-    padding: .3em;
+
+div#products-categories {
+    width: 15%;
+    display: table-cell;
+    box-sizing: border-box;
+    padding: 0 10px;
+    border-right: 3px solid #111;
 }
 
-div.item {
-    border-top: 1px dotted gray;
-    padding-top: .7em;
-    margin-bottom: .7em;
+div#products-categories ul {
+    margin: 0;
+    padding: 0;
 }
 
-div.item:first-child {
-    border-top: none;
-    padding-top: 0;
+div#products-categories h3 {
+    text-align: center;
 }
 
-div.item h3, div.item h4, div.pager a {
-    font: bold 1em "Arial Narrow", "Franklin Gothic Medium", Arial;
+li#category-item {
+    list-style-type: none;
+    padding: 0 0 20px 0;
 }
 
-div.item h3 {
-    font-size: 1.3em;
-    margin: 0 0 .25em 0;
-}
-
-div.item h4 {
-    font-size: 1.1em;
-    margin: .4em 0 0 0;
-}
-
-div.pager {
-    text-align: right;
-    border-top: 2px solid silver;
-    padding: .5em 0 0 0;
-    margin-top: 1em;
-}
-
-div.pager a {
-    font-size: 1.1em;
-    color: #666;
-    text-decoration: none;
-    padding: 0 .4em 0 .4em;
-}
-
-div.pager a:hover {
-    background-color: Silver;
-}
-
-div.pager a.selected {
-    background-color: #353535;
+li#category-item a {
+    font-size: large;
+    font-style: oblique;
     color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+li#category-item a.category-selected {
+    cursor: text;
+    color: lightgreen;
+}
+
+li#category-item:hover a:not(a.category-selected) {
+    color: aqua;
+}
+
+
+div#products-container {
+    width: 85%;
+    display: table-cell;
+    box-sizing: border-box;
+}
+
+div#products-container h1 {
+    text-align: center;
+}
+
+div#products-pages {
+    text-align: left;
+    margin: 4px 0;
+    padding: 4px 10px;
+    border-top: 3px solid #111;
+}
+
+div#products-pages a {
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    padding: 0 2px;
+}
+
+div#products-pages a.page-selected {
+    cursor: text;
+    color: lightgreen;
+}
+
+div#products-pages a:not(a.page-selected):hover {
+    color: aqua;
+}
+
+div#product-item {
+    padding: 0 10px 10px 10px;
+    border-top: 3px solid #111;
+}
+
+div#product-item span.product-added {
+    display: block;
+    color: lightgreen;
+    font-size: large;
+}
+
+div#product-item button {
+    display: block;
+    border: none;
+    background: inherit;
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+div#product-item button:hover {
+    color: aqua;
+}
+
+div#action-buttons {
+    width: 100%;
+    display: block;
+}
+
+div#action-buttons button[type=submit], div#action-buttons a {
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 100px;
+}
+
+div#action-buttons button[type=submit] {
+    width: 30%;
+    margin: 0 5% 0 10%;
+    display: inline-block;
+    border: none;
+    background-color: darkred;
+}
+
+div#action-buttons a {
+    width: 30%;
+    margin: 0 10% 0 5%;
+    display: inline-block;
+    background-color: darkgreen;
+}
+
+div#action-buttons button[type=submit]:hover, div#action-buttons a:hover {
+    background-color: aqua;
 }

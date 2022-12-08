@@ -7,6 +7,7 @@ namespace NetworkEquipmentStore.Models.Repository
 {
     using NetworkEquipmentStore.Models.DAO;
 
+
     public class Repository
     {
         private readonly UserDAO userDAO = new UserDAO();
@@ -29,14 +30,17 @@ namespace NetworkEquipmentStore.Models.Repository
             }
         }
 
-        public void UpdateUserInfo(User user) => userDAO.UpdateUsers(user);
+        public void UpdateUser(User user) => userDAO.UpdateUsers(user);
         public void DeleteUser(User user) => userDAO.DeleteUsers(user);
 
 
+        public Product GetProductByID(int productID) => productDAO.GetProductByID(productID);
         public IEnumerable<Product> GetAllProducts() => productDAO.GetAllProducts();
+        public int GetAllProductsCountByCategory(ProductCategory category = ProductCategory.NONE) => productDAO.GetAllProductsCountByCategory(category);
         public void InsertProduct(Product product) => productDAO.InsertProducts(product);
         public void UpdateProduct(Product product) => productDAO.UpdateProducts(product);
         public void DeleteProduct(Product product) => productDAO.DeleteProducts(product);
+        public void DeleteProductByID(int id) => productDAO.DeleteProductByID(id);
 
 
         public IEnumerable<Order> GetAllOrders() => orderDAO.GetAllOrders();

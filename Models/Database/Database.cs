@@ -9,16 +9,17 @@ namespace NetworkEquipmentStore.Models.Database
 {
     internal enum Status
     {
+        ConnectionNotInitialized,
         ConnectionOpen,
         ConnectionClosed,
-        ConnectionNotInitialized,
         EmptyResult
     }
 
     public static class Database
     {
         static private NpgsqlConnection Connection;
-        static private Status ConnectionStatus { get; set; }
+        static private Status ConnectionStatus { get; set; } = Status.ConnectionNotInitialized;
+
 
         private static void OpenConnection()
         {

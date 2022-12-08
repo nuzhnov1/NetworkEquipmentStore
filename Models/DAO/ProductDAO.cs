@@ -9,6 +9,7 @@ namespace NetworkEquipmentStore.Models.DAO
 {
     using Database;
 
+
     public class ProductDAO
     {
         public Product GetProductByID(int id)
@@ -49,7 +50,7 @@ namespace NetworkEquipmentStore.Models.DAO
                     Name = row["name"].ToString(),
                     Description = row["description"].ToString(),
                     Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
-                    ImagePath = $"Content/images/{row["image"]}.png",
+                    ImagePath = $"/Content/images/{row["image"]}.png",
                     Price = decimal.Parse(row["price"].ToString(), System.Globalization.NumberStyles.Currency),
                     Quantity = int.Parse(row["quantity"].ToString())
                 };
@@ -58,6 +59,20 @@ namespace NetworkEquipmentStore.Models.DAO
             }
 
             return products;
+        }
+
+        public int GetAllProductsCountByCategory(ProductCategory category)
+        {
+            if (category != ProductCategory.NONE)
+            {
+                string query = $"SELECT COUNT(*) AS result FROM ShopProduct WHERE category = '{category}';";
+                return int.Parse(Database.Request(query).Rows[0]["result"].ToString());
+            }
+            else
+            {
+                string query = $"SELECT COUNT(*) AS result FROM ShopProduct;";
+                return int.Parse(Database.Request(query).Rows[0]["result"].ToString());
+            }
         }
 
         public void InsertProducts(params Product[] products)
@@ -91,6 +106,14 @@ namespace NetworkEquipmentStore.Models.DAO
                 string query = $"UPDATE ShopProduct SET name = '{name}', description = '{description}', category = '{category}', image = '{imageGUID}', price = {price}, quantity = {quantity} WHERE id = {id};";
                 Database.Execute(query);
             }
+        }
+
+        public void DeleteProductByID(int id)
+        {
+            string queryShopProductsList = $"DELETE FROM ShopProductsList WHERE product_id = {id};";
+            Database.Execute(queryShopProductsList);
+            string query = $"DELETE FROM ShopProduct WHERE id = {id};";
+            Database.Execute(query);
         }
 
         public void DeleteProducts(params Product[] products)

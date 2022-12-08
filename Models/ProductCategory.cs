@@ -7,10 +7,11 @@ namespace NetworkEquipmentStore.Models
 {
     public enum ProductCategory
     {
+        NONE,
         ROUTER,
         SWITCH,
-        HUB,
+        CABEL,
         ADAPTER,
-        CABEL
+        OTHER
     }
 }

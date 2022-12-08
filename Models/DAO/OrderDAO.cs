@@ -8,6 +8,7 @@ namespace NetworkEquipmentStore.Models.DAO
 {
     using Database;
 
+
     public class OrderDAO
     {
         private IEnumerable<ProductOrderInfo> GetAllProductsFromOrder(int OrderID)
@@ -55,6 +56,13 @@ namespace NetworkEquipmentStore.Models.DAO
         public Order GetOrderByID(int id)
         {
             string query = $"SELECT * FROM ShopOrder WHERE id = {id};";
+            DataTable table = Database.Request(query);
+
+            if (table.Rows.Count == 0)
+            {
+                return null;
+            }
+
             DataRow row = Database.Request(query).Rows[0];
 
             int UserID = int.Parse(row["user_id"].ToString());

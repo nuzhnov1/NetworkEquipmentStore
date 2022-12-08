@@ -5,46 +5,40 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing;
+using NetworkEquipmentStore.Models;
+using NetworkEquipmentStore.Pages.Helpers;
+using System.Web.Routing;
 
 namespace NetworkEquipmentStore.Pages
 {
-    using Models;
-
-
-    public partial class NetworkEquipmentStore : MasterPage
+    public partial class Store : MasterPage
     {
-        private const string USER_ID = "user_id";
-        private const string USER_NAME = "user_name";
-        private const string USER_LEVEL = "user_level";
-        private const string USER_LOGIN = "user_login";
-        private const string USER_PASSWORD_HASH = "user_password_hash";
-
-
         protected void Page_Load(object sender, EventArgs e)
         {
+            User user = SessionHelper.GetUser(Session);
+
             // Если гость:
-            if (Session[USER_LEVEL] == null)
+            if (user == null)
             {
                 Cart.Visible = false;
                 Orders.Visible = false;
                 Clients.Visible = false;
-                LoginLink.Visible = true;
+                Authorization.Visible = true;
                 UsernameLabel.Visible = false;
                 DropdownContent.Visible = false;
             }
             // Если клиент:
             else
             {
-                PermissionsLevel userLevel = (PermissionsLevel)Session[USER_LEVEL];
-
-                if (userLevel == PermissionsLevel.CLIENT)
+                if (user.Level == PermissionsLevel.CLIENT)
                 {
                     Cart.Visible = true;
                     Orders.Visible = true;
                     Clients.Visible = false;
-                    LoginLink.Visible = false;
+                    Authorization.Visible = false;
                     UsernameLabel.Visible = true;
                     UsernameLabel.ForeColor = Color.Yellow;
+                    UsernameLabel.Text = user.Name;
                     DropdownContent.Visible = true;
                 }
                 else
@@ -52,23 +46,24 @@ namespace NetworkEquipmentStore.Pages
                     Cart.Visible = false;
                     Orders.Visible = true;
                     Clients.Visible = true;
-                    LoginLink.Visible = false;
+                    Authorization.Visible = false;
                     UsernameLabel.Visible = true;
                     UsernameLabel.ForeColor = Color.Green;
+                    UsernameLabel.Text = user.Name;
                     DropdownContent.Visible = true;
                 }
             }
+
+            Cart.HRef = RouteTable.Routes.GetVirtualPath(null, "cart", null).VirtualPath;
+            Orders.HRef = RouteTable.Routes.GetVirtualPath(null, "orders", null).VirtualPath;
+            Clients.HRef = RouteTable.Routes.GetVirtualPath(null, "clients", null).VirtualPath;
+            Authorization.HRef = RouteTable.Routes.GetVirtualPath(null, "authorization", null).VirtualPath;
         }
 
-        protected void ExitButton_Click(object sender, EventArgs e)
+        protected void ExitButtonClick(object sender, EventArgs e)
         {
-            Session[USER_ID] = null;
-            Session[USER_NAME] = null;
-            Session[USER_LEVEL] = null;
-            Session[USER_LOGIN] = null;
-            Session[USER_PASSWORD_HASH] = null;
-
-            Response.RedirectPermanent("/Pages/Products.aspx", false);
+            SessionHelper.RemoveUser(Session);
+            Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
         }
     }
 }

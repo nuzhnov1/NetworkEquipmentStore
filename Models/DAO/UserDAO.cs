@@ -8,6 +8,7 @@ namespace NetworkEquipmentStore.Models.DAO
 {
     using Database;
 
+
     public class UserDAO
     {
         public User GetUserByID(int id)
@@ -86,7 +87,7 @@ namespace NetworkEquipmentStore.Models.DAO
                 string login = user.Login;
                 string PasswordHash = user.PasswordHash;
 
-                string query = $"INSERT INTO ShopUser(name, level, login, password_hash) VALUES ('{name}', '{level}', '{login}', {PasswordHash});";
+                string query = $"INSERT INTO ShopUser(name, level, login, password_hash) VALUES ('{name}', '{level}', '{login}', '{PasswordHash}');";
                 Database.Execute(query);
             }
         }

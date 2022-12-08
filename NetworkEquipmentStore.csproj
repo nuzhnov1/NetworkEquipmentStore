@@ -113,16 +113,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Authorization.css" />
     <Content Include="Content\NetworkEquipmentStore.Master.css" />
     <Content Include="Content\Products.css" />
+    <Content Include="Controls\CategoryList.ascx" />
     <Content Include="Global.asax" />
+    <Content Include="Pages\Authorization.aspx" />
     <Content Include="Pages\Products.aspx" />
+    <Content Include="Pages\Registration.aspx" />
+    <Content Include="Scripts\registration.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controls\CategoryList.ascx.cs">
+      <DependentUpon>CategoryList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\CategoryList.ascx.designer.cs">
+      <DependentUpon>CategoryList.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Cart.cs" />
     <Compile Include="Models\DAO\OrderDAO.cs" />
     <Compile Include="Models\DAO\ProductDAO.cs" />
     <Compile Include="Models\DAO\UserDAO.cs" />
@@ -131,8 +145,18 @@
     <Compile Include="Models\PermissionsLevel.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductCategory.cs" />
+    <Compile Include="Models\ProductCategoryExtensions.cs" />
     <Compile Include="Models\Repository\Repository.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Pages\Authorization.aspx.cs">
+      <DependentUpon>Authorization.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Authorization.aspx.designer.cs">
+      <DependentUpon>Authorization.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Helpers\EncoderHelper.cs" />
+    <Compile Include="Pages\Helpers\SessionHelper.cs" />
     <Compile Include="Pages\NetworkEquipmentStore.Master.cs">
       <DependentUpon>NetworkEquipmentStore.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -147,6 +171,13 @@
     <Compile Include="Pages\Products.aspx.designer.cs">
       <DependentUpon>Products.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Registration.aspx.cs">
+      <DependentUpon>Registration.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Registration.aspx.designer.cs">
+      <DependentUpon>Registration.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -160,12 +191,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Start\" />
+    <Folder Include="App_Data\" />
     <Folder Include="Content\images\" />
-    <Folder Include="Controls\" />
     <Folder Include="Pages\Admin\" />
-    <Folder Include="Pages\Helpers\" />
-    <Folder Include="Scripts\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
