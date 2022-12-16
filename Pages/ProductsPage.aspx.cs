@@ -13,7 +13,7 @@ namespace NetworkEquipmentStore.Pages
     using System.Web.Routing;
 
 
-    public partial class Products : Page
+    public partial class ProductsPage : Page
     {
         protected const int PAGE_COUNT = 5;
         protected const int PRODUCT_COUNT = 5;

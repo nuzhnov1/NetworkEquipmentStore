@@ -12,7 +12,7 @@ using System.Web.UI.WebControls;
 
 namespace NetworkEquipmentStore.Pages
 {
-    public partial class Authorization : Page
+    public partial class AuthorizationPage : Page
     {
         private readonly Repository repository = new Repository();
 
@@ -35,7 +35,6 @@ namespace NetworkEquipmentStore.Pages
             }
 
             RegisterLink.HRef = RouteTable.Routes.GetVirtualPath(null, "registration", null).VirtualPath;
-            MainLink.HRef = RouteTable.Routes.GetVirtualPath(null, null).VirtualPath;
         }
 
         protected void LoginButtonClick(object sender, EventArgs e)

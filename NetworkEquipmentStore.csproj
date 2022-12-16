@@ -118,9 +118,13 @@
     <Content Include="Content\Products.css" />
     <Content Include="Controls\CategoryList.ascx" />
     <Content Include="Global.asax" />
-    <Content Include="Pages\Authorization.aspx" />
-    <Content Include="Pages\Products.aspx" />
-    <Content Include="Pages\Registration.aspx" />
+    <Content Include="Pages\AuthorizationPage.aspx" />
+    <Content Include="Pages\CartPage.aspx" />
+    <Content Include="Pages\ClientsPage.aspx" />
+    <Content Include="Pages\OrdersPage.aspx" />
+    <Content Include="Pages\ProductPage.aspx" />
+    <Content Include="Pages\ProductsPage.aspx" />
+    <Content Include="Pages\RegistrationPage.aspx" />
     <Content Include="Scripts\registration.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -148,12 +152,26 @@
     <Compile Include="Models\ProductCategoryExtensions.cs" />
     <Compile Include="Models\Repository\Repository.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Pages\Authorization.aspx.cs">
-      <DependentUpon>Authorization.aspx</DependentUpon>
+    <Compile Include="Pages\AuthorizationPage.aspx.cs">
+      <DependentUpon>AuthorizationPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Authorization.aspx.designer.cs">
-      <DependentUpon>Authorization.aspx</DependentUpon>
+    <Compile Include="Pages\AuthorizationPage.aspx.designer.cs">
+      <DependentUpon>AuthorizationPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CartPage.aspx.cs">
+      <DependentUpon>CartPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\CartPage.aspx.designer.cs">
+      <DependentUpon>CartPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ClientsPage.aspx.cs">
+      <DependentUpon>ClientsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\ClientsPage.aspx.designer.cs">
+      <DependentUpon>ClientsPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Helpers\EncoderHelper.cs" />
     <Compile Include="Pages\Helpers\SessionHelper.cs" />
@@ -164,19 +182,33 @@
     <Compile Include="Pages\NetworkEquipmentStore.Master.designer.cs">
       <DependentUpon>NetworkEquipmentStore.Master</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Products.aspx.cs">
-      <DependentUpon>Products.aspx</DependentUpon>
+    <Compile Include="Pages\OrdersPage.aspx.cs">
+      <DependentUpon>OrdersPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Products.aspx.designer.cs">
-      <DependentUpon>Products.aspx</DependentUpon>
+    <Compile Include="Pages\OrdersPage.aspx.designer.cs">
+      <DependentUpon>OrdersPage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Registration.aspx.cs">
-      <DependentUpon>Registration.aspx</DependentUpon>
+    <Compile Include="Pages\ProductPage.aspx.cs">
+      <DependentUpon>ProductPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Registration.aspx.designer.cs">
-      <DependentUpon>Registration.aspx</DependentUpon>
+    <Compile Include="Pages\ProductPage.aspx.designer.cs">
+      <DependentUpon>ProductPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ProductsPage.aspx.cs">
+      <DependentUpon>ProductsPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\ProductsPage.aspx.designer.cs">
+      <DependentUpon>ProductsPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\RegistrationPage.aspx.cs">
+      <DependentUpon>RegistrationPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\RegistrationPage.aspx.designer.cs">
+      <DependentUpon>RegistrationPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

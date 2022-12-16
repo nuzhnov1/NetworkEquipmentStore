@@ -11,7 +11,7 @@ namespace NetworkEquipmentStore.Pages
 {
 
 
-    public partial class Authorization
+    public partial class AuthorizationPage
     {
 
         /// <summary>
@@ -58,14 +58,5 @@ namespace NetworkEquipmentStore.Pages
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlAnchor RegisterLink;
-
-        /// <summary>
-        /// MainLink элемент управления.
-        /// </summary>
-        /// <remarks>
-        /// Автоматически создаваемое поле.
-        /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor MainLink;
     }
 }

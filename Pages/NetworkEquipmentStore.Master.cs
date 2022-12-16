@@ -11,56 +11,107 @@ using System.Web.Routing;
 
 namespace NetworkEquipmentStore.Pages
 {
-    public partial class Store : MasterPage
+    public partial class StorePage : MasterPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (IsPostBack)
+            {
+                if (Request.Form["Exit"] != null)
+                {
+                    ExitButtonClick();
+                }
+            }
+        }
+
+        protected void CreateTopNavList()
+        {
             User user = SessionHelper.GetUser(Session);
 
-            // Если гость:
-            if (user == null)
+            string nullHref = "javascript:void(0)";
+            string mainHref = RouteTable.Routes.GetVirtualPath(null, null).VirtualPath;
+            string cartHref = RouteTable.Routes.GetVirtualPath(null, "cart", null).VirtualPath;
+            string addProductHref = RouteTable.Routes.GetVirtualPath(null, "product", null).VirtualPath;
+            string ordersHref = RouteTable.Routes.GetVirtualPath(null, "orders", null).VirtualPath;
+            string clientsHref = RouteTable.Routes.GetVirtualPath(null, "clients", null).VirtualPath;
+            string authorizationHref = RouteTable.Routes.GetVirtualPath(null, "authorization", null).VirtualPath;
+
+            
+            if (Page is ProductsPage)
             {
-                Cart.Visible = false;
-                Orders.Visible = false;
-                Clients.Visible = false;
-                Authorization.Visible = true;
-                UsernameLabel.Visible = false;
-                DropdownContent.Visible = false;
+                Response.Write($"<li><a href='{nullHref}' class='selected'>Главная</a></li>");
             }
-            // Если клиент:
             else
             {
-                if (user.Level == PermissionsLevel.CLIENT)
+                Response.Write($"<li><a href='{mainHref}'>Главная</a></li>");
+            }
+
+            if (Page is CartPage && user != null && user.Level == PermissionsLevel.CLIENT)
+            {
+                Response.Write($"<li><a href='{nullHref}' class='selected'>Корзина</a></li>");
+            }
+            else if (user != null && user.Level == PermissionsLevel.CLIENT)
+            {
+                Response.Write($"<li><a href='{cartHref}'>Корзина</a></li>");
+            }
+
+            if (Page is ProductPage && user != null && user.Level == PermissionsLevel.ADMIN)
+            {
+                Response.Write($"<li><a href='{nullHref}' class='selected'>Добавить продукт</a></li>");
+            }
+            else if (user != null && user.Level == PermissionsLevel.ADMIN)
+            {
+                Response.Write($"<li><a href='{addProductHref}'>Добавить продукт</a></li>");
+            }
+
+            if (Page is ProductPage && user != null)
+            {
+                Response.Write($"<li><a href='{nullHref}' class='selected'>Список заказов</a></li>");
+            }
+            else if (user != null)
+            {
+                Response.Write($"<li><a href='{ordersHref}'>Список заказов</a></li>");
+            }
+
+            if (Page is ProductPage && user != null && user.Level == PermissionsLevel.ADMIN)
+            {
+                Response.Write($"<li><a href='{nullHref}' class='selected'>Список клиентов</a></li>");
+            }
+            else if (user != null && user.Level == PermissionsLevel.ADMIN)
+            {
+                Response.Write($"<li><a href='{clientsHref}'>Список клиентов</a></li>");
+            }
+
+            Response.Write("<li id='dropdown'>");
+            
+            if ((Page is AuthorizationPage || Page is RegistrationPage) && user == null)
+            {
+                Response.Write($"<a href='{nullHref}' class='selected'>Войти</a>");
+            }
+            else if (user == null)
+            {
+                Response.Write($"<a href='{authorizationHref}'>Войти</a>");
+            }
+            else
+            {
+                if (user.Level == PermissionsLevel.ADMIN)
                 {
-                    Cart.Visible = true;
-                    Orders.Visible = true;
-                    Clients.Visible = false;
-                    Authorization.Visible = false;
-                    UsernameLabel.Visible = true;
-                    UsernameLabel.ForeColor = Color.Yellow;
-                    UsernameLabel.Text = user.Name;
-                    DropdownContent.Visible = true;
+                    Response.Write($"<span style='color: green'>{user.Name}</span>");
                 }
                 else
                 {
-                    Cart.Visible = false;
-                    Orders.Visible = true;
-                    Clients.Visible = true;
-                    Authorization.Visible = false;
-                    UsernameLabel.Visible = true;
-                    UsernameLabel.ForeColor = Color.Green;
-                    UsernameLabel.Text = user.Name;
-                    DropdownContent.Visible = true;
+                    Response.Write($"<span style='color: yellow'>{user.Name}</span>");
                 }
-            }
 
-            Cart.HRef = RouteTable.Routes.GetVirtualPath(null, "cart", null).VirtualPath;
-            Orders.HRef = RouteTable.Routes.GetVirtualPath(null, "orders", null).VirtualPath;
-            Clients.HRef = RouteTable.Routes.GetVirtualPath(null, "clients", null).VirtualPath;
-            Authorization.HRef = RouteTable.Routes.GetVirtualPath(null, "authorization", null).VirtualPath;
+                Response.Write("<div id='dropdownContent'>");
+                Response.Write("<button name='Exit' type=submit>Выйти</button>");
+                Response.Write("</div>");
+            }
+            
+            Response.Write("</li>");
         }
 
-        protected void ExitButtonClick(object sender, EventArgs e)
+        protected void ExitButtonClick()
         {
             SessionHelper.RemoveUser(Session);
             Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);

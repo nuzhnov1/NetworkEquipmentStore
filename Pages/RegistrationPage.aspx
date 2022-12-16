@@ -1,6 +1,6 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/NetworkEquipmentStore.Master" CodeBehind="Registration.aspx.cs" Inherits="NetworkEquipmentStore.Pages.Registration" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/NetworkEquipmentStore.Master" CodeBehind="RegistrationPage.aspx.cs" Inherits="NetworkEquipmentStore.Pages.RegistrationPage" %>
 
-<asp:Content runat="server" ContentPlaceHolderID="MainContent">
+<asp:Content runat="server" ContentPlaceHolderID="MainContent" ID="RegistrationPage">
     <div id="auth-root">
         <div id="auth-form">
             <span>Имя пользователя</span>
@@ -14,7 +14,6 @@
             <asp:Label runat="server" ID="ErrorLabel" style="display: none;" />
             <asp:Button runat="server" ID="RegistrationButton" Text="Зарегистрироваться" UseSubmitBehavior="true"
                 OnClientClick="return validateRegistrationForm();" OnClick="RegistrationButtonClick" />
-            <a runat="server" id="MainLink">На главную</a>
         </div>
     </div>
 </asp:Content>

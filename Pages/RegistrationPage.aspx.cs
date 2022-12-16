@@ -12,7 +12,7 @@ using System.Web.UI.WebControls;
 
 namespace NetworkEquipmentStore.Pages
 {
-    public partial class Registration : Page
+    public partial class RegistrationPage : Page
     {
         private readonly Repository repository = new Repository();
 
@@ -27,8 +27,6 @@ namespace NetworkEquipmentStore.Pages
             {
                 Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
             }
-
-            MainLink.HRef = RouteTable.Routes.GetVirtualPath(null, null).VirtualPath;
         }
 
         protected void RegistrationButtonClick(object sender, EventArgs e)

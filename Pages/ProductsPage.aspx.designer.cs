@@ -11,7 +11,7 @@ namespace NetworkEquipmentStore.Pages
 {
 
 
-    public partial class Products
+    public partial class ProductsPage
     {
     }
 }

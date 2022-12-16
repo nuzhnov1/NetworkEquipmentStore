@@ -1,6 +1,6 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/NetworkEquipmentStore.Master" CodeBehind="Authorization.aspx.cs" Inherits="NetworkEquipmentStore.Pages.Authorization" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/NetworkEquipmentStore.Master" CodeBehind="AuthorizationPage.aspx.cs" Inherits="NetworkEquipmentStore.Pages.AuthorizationPage" %>
 
-<asp:Content runat="server" ContentPlaceHolderID="MainContent">
+<asp:Content runat="server" ContentPlaceHolderID="MainContent" ID="AuthorizationPage">
     <div id="auth-root">
         <div id="auth-form">
             <span>Логин</span>
@@ -10,7 +10,6 @@
             <asp:Label runat="server" ID="ErrorLabel" Visible="false" />
             <asp:Button runat="server" ID="LoginButton" Text="Войти" UseSubmitBehavior="true" OnClick="LoginButtonClick" />
             <a runat="server" id="RegisterLink">Зарегистрироваться</a>
-            <a runat="server" id="MainLink">На главную</a>
         </div>
     </div>
 </asp:Content>
