@@ -1,15 +1,14 @@
 ﻿using NetworkEquipmentStore.Models;
+using NetworkEquipmentStore.Models.Repository;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.SessionState;
 
 namespace NetworkEquipmentStore.Pages.Helpers
 {
     public enum SessionKey
     {
-        USER, CART
+        USER,
+        CART
     }
 
     public static class SessionHelper
@@ -44,7 +43,10 @@ namespace NetworkEquipmentStore.Pages.Helpers
             
             if (user.Level == PermissionsLevel.CLIENT)
             {
-                Set(session, SessionKey.CART, new Cart());
+                Repository repository = new Repository();
+                Cart userCart = repository.GetUserCart(user);
+                
+                Set(session, SessionKey.CART, userCart);
             }
         }
 

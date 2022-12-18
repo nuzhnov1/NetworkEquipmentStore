@@ -2,13 +2,8 @@
 using NetworkEquipmentStore.Models.Repository;
 using NetworkEquipmentStore.Pages.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
 using System.Web.Routing;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace NetworkEquipmentStore.Pages
 {
@@ -16,13 +11,6 @@ namespace NetworkEquipmentStore.Pages
     {
         private readonly Repository repository = new Repository();
 
-
-        private void ShowError(string message)
-        {
-            ErrorLabel.ForeColor = System.Drawing.Color.Red;
-            ErrorLabel.Text = "Ошибка: " + message;
-            ErrorLabel.Visible = true;
-        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -61,6 +49,12 @@ namespace NetworkEquipmentStore.Pages
             {
                 ShowError("неверный логин!");
             }
+        }
+
+        private void ShowError(string message)
+        {
+            ErrorLabel.ForeColor = System.Drawing.Color.Red;
+            ErrorLabel.Text = "Ошибка: " + message;
         }
     }
 }

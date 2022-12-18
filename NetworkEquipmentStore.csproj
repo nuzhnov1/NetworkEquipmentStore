@@ -120,12 +120,13 @@
     <Content Include="Global.asax" />
     <Content Include="Pages\AuthorizationPage.aspx" />
     <Content Include="Pages\CartPage.aspx" />
+    <Content Include="Pages\CheckoutPage.aspx" />
     <Content Include="Pages\ClientsPage.aspx" />
     <Content Include="Pages\OrdersPage.aspx" />
     <Content Include="Pages\ProductPage.aspx" />
     <Content Include="Pages\ProductsPage.aspx" />
     <Content Include="Pages\RegistrationPage.aspx" />
-    <Content Include="Scripts\registration.js" />
+    <Content Include="Scripts\product.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -141,10 +142,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\DAO\CartDAO.cs" />
     <Compile Include="Models\DAO\OrderDAO.cs" />
     <Compile Include="Models\DAO\ProductDAO.cs" />
     <Compile Include="Models\DAO\UserDAO.cs" />
-    <Compile Include="Models\Database\Database.cs" />
+    <Compile Include="Models\DB\Database.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\PermissionsLevel.cs" />
     <Compile Include="Models\Product.cs" />
@@ -165,6 +167,13 @@
     </Compile>
     <Compile Include="Pages\CartPage.aspx.designer.cs">
       <DependentUpon>CartPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\CheckoutPage.aspx.cs">
+      <DependentUpon>CheckoutPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\CheckoutPage.aspx.designer.cs">
+      <DependentUpon>CheckoutPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\ClientsPage.aspx.cs">
       <DependentUpon>ClientsPage.aspx</DependentUpon>
@@ -225,7 +234,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\images\" />
-    <Folder Include="Pages\Admin\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

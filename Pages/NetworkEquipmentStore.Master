@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="/Content/Products.css" />
     <link rel="stylesheet" href="/Content/Authorization.css" />
 
-    <script src="Scripts/registration.js"></script>
+    <script src="Scripts/product.js"></script>
 </head>
 <body>
     <div id="root">
-        <form id="Form1" runat="server">
+        <form runat="server" id="MainForm" method="post">
             <div id="topnav">
                 <div id="header">Интернет-магазин "Сетевое оборудование"</div>
                 <ul id="topnavList">
@@ -23,7 +23,7 @@
                 </ul>
             </div>
             <div id="body-content">
-                <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+                <asp:ContentPlaceHolder runat="server" ID="MainContent" />
             </div>
             <hr/>
             <footer id="copyright">

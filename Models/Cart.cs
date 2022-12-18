@@ -1,16 +1,31 @@
-﻿using System;
+﻿using NetworkEquipmentStore.Models.Repository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace NetworkEquipmentStore.Models
 {
     public class Cart
     {
         private readonly List<ProductOrderInfo> cartLines = new List<ProductOrderInfo>();
-        public IEnumerable<ProductOrderInfo> Lines => cartLines;
-
         
+        public DateTime LastUpdatedTime { get; set; }
+        public IEnumerable<ProductOrderInfo> Lines
+        {
+            get => cartLines;
+            set
+            {
+                cartLines.Clear();
+                cartLines.AddRange(value);
+            }
+        }
+        public decimal TotalCost => Lines.Sum(line => line.Product.Price * line.Quantity);
+
+
+        public Cart() {}
+        public Cart(IEnumerable<ProductOrderInfo> cartLines) => this.cartLines.AddRange(cartLines);
+
+
         public bool IsInCart(Product product) => cartLines
             .Where(l => l.Product.ID == product.ID)
             .Count() > 0;
@@ -33,24 +48,24 @@ namespace NetworkEquipmentStore.Models
             });
         }
 
-        public void AddOneProduct(Product product)
+        public void AddOneProduct(int productID)
         {
             ProductOrderInfo line = cartLines
-                .Where(l => l.Product.ID == product.ID)
+                .Where(l => l.Product.ID == productID)
                 .FirstOrDefault();
             
             line.Quantity += 1;
         }
 
-        public void RemoveLine(Product product)
+        public void RemoveLine(int productID)
         {
-            cartLines.RemoveAll(l => l.Product.ID == product.ID);
+            cartLines.RemoveAll(l => l.Product.ID == productID);
         }
 
-        public void RemoveOneProduct(Product product)
+        public void RemoveOneProduct(int productID)
         {
             ProductOrderInfo line = cartLines
-                .Where(l => l.Product.ID == product.ID)
+                .Where(l => l.Product.ID == productID)
                 .FirstOrDefault();
 
             line.Quantity -= 1;

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Drawing;
 using NetworkEquipmentStore.Models;
 using NetworkEquipmentStore.Pages.Helpers;
 using System.Web.Routing;
@@ -64,7 +59,7 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write($"<li><a href='{addProductHref}'>Добавить продукт</a></li>");
             }
 
-            if (Page is ProductPage && user != null)
+            if (Page is OrdersPage && user != null)
             {
                 Response.Write($"<li><a href='{nullHref}' class='selected'>Список заказов</a></li>");
             }
@@ -73,7 +68,7 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write($"<li><a href='{ordersHref}'>Список заказов</a></li>");
             }
 
-            if (Page is ProductPage && user != null && user.Level == PermissionsLevel.ADMIN)
+            if (Page is ClientsPage && user != null && user.Level == PermissionsLevel.ADMIN)
             {
                 Response.Write($"<li><a href='{nullHref}' class='selected'>Список клиентов</a></li>");
             }

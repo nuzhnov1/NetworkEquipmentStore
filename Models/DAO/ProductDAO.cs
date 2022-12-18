@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Data;
-using System.Text.RegularExpressions;
+using NetworkEquipmentStore.Models.DB;
 
 namespace NetworkEquipmentStore.Models.DAO
 {
-    using Database;
-
-
     public class ProductDAO
     {
         public Product GetProductByID(int id)
@@ -30,8 +25,8 @@ namespace NetworkEquipmentStore.Models.DAO
                 Name = row["name"].ToString(),
                 Description = row["description"].ToString(),
                 Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
-                ImagePath = $"Content/images/{row["image"]}.png",
-                Price = decimal.Parse(row["price"].ToString(), System.Globalization.NumberStyles.Currency),
+                ImageName = row["image"].ToString(),
+                Price = decimal.Parse(row["price"].ToString()),
                 Quantity = int.Parse(row["quantity"].ToString())
             };
         }
@@ -50,8 +45,8 @@ namespace NetworkEquipmentStore.Models.DAO
                     Name = row["name"].ToString(),
                     Description = row["description"].ToString(),
                     Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
-                    ImagePath = $"/Content/images/{row["image"]}.png",
-                    Price = decimal.Parse(row["price"].ToString(), System.Globalization.NumberStyles.Currency),
+                    ImageName = row["image"].ToString(),
+                    Price = decimal.Parse(row["price"].ToString()),
                     Quantity = int.Parse(row["quantity"].ToString())
                 };
 
@@ -63,70 +58,57 @@ namespace NetworkEquipmentStore.Models.DAO
 
         public int GetAllProductsCountByCategory(ProductCategory category)
         {
+            string query;
             if (category != ProductCategory.NONE)
             {
-                string query = $"SELECT COUNT(*) AS result FROM ShopProduct WHERE category = '{category}';";
-                return int.Parse(Database.Request(query).Rows[0]["result"].ToString());
+                query = $"SELECT COUNT(*) AS result FROM ShopProduct WHERE category = '{category}';";
             }
             else
             {
-                string query = $"SELECT COUNT(*) AS result FROM ShopProduct;";
-                return int.Parse(Database.Request(query).Rows[0]["result"].ToString());
+                query = $"SELECT COUNT(*) AS result FROM ShopProduct;";
             }
+
+            return int.Parse(Database.Request(query).Rows[0]["result"].ToString());
         }
 
-        public void InsertProducts(params Product[] products)
+        public Product InsertProduct(Product product)
         {
-            foreach (Product product in products)
-            {
-                string name = product.Name;
-                string description = product.Description;
-                ProductCategory category = product.Category;
-                string imageGUID = Regex.Match(product.Name, "Content/images/(.*).png").Groups[1].Value;
-                decimal price = product.Price;
-                int quantity = product.Quantity;
+            string name = product.Name.Replace("'", "\\'");
+            string description = product.Description.Replace("'", "\\'");
+            ProductCategory category = product.Category;
+            string image = product.ImageName;
+            string price = product.Price.ToString().Replace(',', '.');
+            int quantity = product.Quantity;
 
-                string query = $"INSERT INTO ShopProduct(name, description, category, image, price, quantity) VALUES ('{name}', '{description}', '{category}', '{imageGUID}', {price}, {quantity});";
-                Database.Execute(query);
-            }
+            string query = $"INSERT INTO ShopProduct(name, description, category, image, price, quantity) VALUES ('{name}', '{description}', '{category}', '{image}', {price}, {quantity}) RETURNING id;";
+            int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
+
+            product.ID = id;
+            return product;
         }
 
-        public void UpdateProducts(params Product[] products)
+        public Product UpdateProduct(Product product)
         {
-            foreach (Product product in products)
-            {
-                int id = product.ID;
-                string name = product.Name;
-                string description = product.Description;
-                ProductCategory category = product.Category;
-                string imageGUID = Regex.Match(product.Name, "Content/images/(.*).png").Groups[1].Value;
-                decimal price = product.Price;
-                int quantity = product.Quantity;
+            int id = product.ID;
+            string name = product.Name.Replace("'", "\\'");
+            string description = product.Description.Replace("'", "\\'");
+            ProductCategory category = product.Category;
+            string image = product.ImageName;
+            string price = product.Price.ToString().Replace(',', '.');
+            int quantity = product.Quantity;
 
-                string query = $"UPDATE ShopProduct SET name = '{name}', description = '{description}', category = '{category}', image = '{imageGUID}', price = {price}, quantity = {quantity} WHERE id = {id};";
-                Database.Execute(query);
-            }
-        }
-
-        public void DeleteProductByID(int id)
-        {
-            string queryShopProductsList = $"DELETE FROM ShopProductsList WHERE product_id = {id};";
-            Database.Execute(queryShopProductsList);
-            string query = $"DELETE FROM ShopProduct WHERE id = {id};";
+            string query = $"UPDATE ShopProduct SET name = '{name}', description = '{description}', category = '{category}', image = '{image}', price = {price}, quantity = {quantity} WHERE id = {id};";
             Database.Execute(query);
+
+            return product;
         }
 
-        public void DeleteProducts(params Product[] products)
+        public void DeleteProductByID(int productID)
         {
-            foreach (Product product in products)
-            {
-                int id = product.ID;
-
-                string queryShopProductsList = $"DELETE FROM ShopProductsList WHERE product_id = {id};";
-                Database.Execute(queryShopProductsList);
-                string query = $"DELETE FROM ShopProduct WHERE id = {id};";
-                Database.Execute(query);
-            }
+            string queryShopProductsList = $"DELETE FROM ShopProductsList WHERE product_id = {productID};";
+            Database.Execute(queryShopProductsList);
+            string query = $"DELETE FROM ShopProduct WHERE id = {productID};";
+            Database.Execute(query);
         }
     }
 }

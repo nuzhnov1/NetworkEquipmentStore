@@ -1,17 +1,320 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
+using System.Drawing;
+using System.Web.Routing;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using NetworkEquipmentStore.Models;
+using NetworkEquipmentStore.Models.Repository;
+using NetworkEquipmentStore.Pages.Helpers;
 
 namespace NetworkEquipmentStore.Pages
 {
-    public partial class ProductPage : System.Web.UI.Page
+    public partial class ProductPage : Page
     {
+        const int MAX_IMAGE_SIZE = 1024 * 1024 * 1;  // 1 MB
+
+
+
+        private readonly Repository repository = new Repository();
+        
+        private int? CurrentProductID
+        {
+            get
+            {
+                string reqValue = (string)RouteData.Values["id"] ?? Request.QueryString["id"];
+
+                if (reqValue != null)
+                {
+                    if (int.TryParse(reqValue, out int temp))
+                    {
+                        return temp;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        protected Product CurrentProduct
+        {
+            get
+            {
+                int? productID = CurrentProductID;
+
+                if (productID == null)
+                {
+                    return null;
+                } 
+                else
+                {
+                    return repository.GetProductByID((int)productID);
+                }
+            }
+        }
+
+        
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            User user = SessionHelper.GetUser(Session);
 
+            if (user != null && user.Level == PermissionsLevel.ADMIN)
+            {
+                if (CurrentProductID == null)
+                {
+                    ProductImageFile.Attributes.Add("required", "");
+                }
+
+                if (IsPostBack)
+                {
+                    if (Request.Form["submit"] != null && IsValidProductForm())
+                    {
+                        if (Request.Form["ProductID"] == "")
+                        {
+                            InsertProduct();
+                            Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
+                        }
+                        else
+                        {
+                            UpdateProduct();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
+            }
+        }
+
+        protected void CreateCategoriesList(ProductCategory choose = ProductCategory.NONE)
+        {
+            IEnumerable<ProductCategory> categories = Enum.GetValues(typeof(ProductCategory)).OfType<ProductCategory>();
+
+            Response.Write("<select name='ProductCategory' required>");
+            foreach (ProductCategory category in categories)
+            {
+                if (category == ProductCategory.NONE)
+                {
+                    continue;
+                }
+
+                string selectedOrNot = (choose == category) ? "selected" : "";
+                string text = category.ToWebRepresentation();
+
+                Response.Write($"<option {selectedOrNot} value='{category}'>{text}</option>");
+            }
+            Response.Write("</select>");
+        }
+
+        private void InsertProduct()
+        {
+            string name = Request.Form["ProductName"];
+            ProductCategory category = (ProductCategory)Enum.Parse(typeof(ProductCategory), Request.Form["ProductCategory"]);
+            string imageName = SaveFile(ProductImageFile.PostedFile);
+            string description = Request.Form["ProductDescription"];
+            decimal price = decimal.Parse(Request.Form["ProductPrice"]);
+            int quantity = int.Parse(Request.Form["ProductQuantity"]);
+
+            Product newProduct = new Product
+            {
+                ID = 0,
+                Name = name,
+                Category = category,
+                Description = description,
+                ImageName = imageName,
+                Price = price,
+                Quantity = quantity
+            };
+
+            repository.InsertProduct(newProduct);
+        }
+
+        private void UpdateProduct()
+        {
+            int id = int.Parse(Request.Form["ProductID"]);
+            string name = Request.Form["ProductName"];
+            ProductCategory category = (ProductCategory)Enum.Parse(typeof(ProductCategory), Request.Form["ProductCategory"]);
+
+            HttpPostedFile postedImage = ProductImageFile.PostedFile;
+            string imageName;
+            if (postedImage.ContentLength == 0)
+            {
+                imageName = repository.GetProductByID(id).ImageName;
+            }
+            else
+            {
+                imageName = SaveFile(postedImage);
+            }
+
+            string description = Request.Form["ProductDescription"];
+            decimal price = decimal.Parse(Request.Form["ProductPrice"]);
+            int quantity = int.Parse(Request.Form["ProductQuantity"]);
+
+
+            Product updatedProduct = new Product
+            {
+                ID = id,
+                Name = name,
+                Category = category,
+                Description = description,
+                ImageName = imageName,
+                Price = price,
+                Quantity = quantity
+            };
+
+            repository.UpdateProduct(updatedProduct);
+            ShowStatus("Продукт успешно обновлён!");
+        }
+
+        private string SaveFile(HttpPostedFile imageFile)
+        {
+            string imagesDir = AppDomain.CurrentDomain.BaseDirectory + @"Content\images";
+            string[] filenames = Directory.GetFiles(imagesDir);
+            string newName = imageFile.FileName;
+
+            while (filenames.Contains($"{imagesDir}\\{newName}"))
+            {
+                newName = $"{Guid.NewGuid()}.png";
+            }
+
+            string newFilePath = $"{imagesDir}\\{newName}.png";
+            FileStream newImageFile = File.Create(newFilePath);
+
+            imageFile.InputStream.CopyTo(newImageFile);
+            newImageFile.Close();
+
+            return newName;
+        }
+
+
+        private bool IsValidProductForm() =>
+            IsNameValid() && IsImageValid() &&
+            IsValidDescription() && IsValidPrice() &&
+            IsValidQuantity();
+
+        private bool IsNameValid()
+        {
+            string name = Request.Form["ProductName"];
+
+            if (name.Length == 0)
+            {
+                ShowError("имя товара не может быть пустым");
+                return false;
+            }
+            else if (name.Length > 100)
+            {
+                ShowError("имя товара не должно превышать 100 символов");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool IsImageValid()
+        {
+            HttpPostedFile postedImage = ProductImageFile.PostedFile;
+
+            if (postedImage.ContentLength > MAX_IMAGE_SIZE)
+            {
+                ShowError("превышен максимальный размер изображения в 1 МБ");
+                return false;
+            }
+            else if (postedImage.FileName.Length > 4000)
+            {
+                ShowError($"превышено максимальное число символов в названии изображения в 4000 символов");
+                return false;
+            }
+            else if (!IsValidFileName(postedImage.FileName))
+            {
+                ShowError("в названии файла изображения присутствуют недопустимые символы");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool IsValidFileName(string filename) => filename.IndexOfAny(Path.GetInvalidFileNameChars()) < 0;
+
+        private bool IsValidDescription()
+        {
+            string description = Request.Form["ProductDescription"];
+
+            if (description.Length > 20_000)
+            {
+                ShowError("описание товара превышает максимально допустимое число символов в 20 000");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool IsValidPrice()
+        {
+            decimal value;
+
+            if (!decimal.TryParse(Request.Form["ProductPrice"], out value))
+            {
+                ShowError("неверное значение цены товара");
+                return false;
+            }
+            else if (value < 0)
+            {
+                ShowError("цена товара не может быть отрицательной");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private bool IsValidQuantity()
+        {
+            int value;
+
+            if (!int.TryParse(Request.Form["ProductQuantity"], out value))
+            {
+                ShowError("неверное значение количества товаров");
+                return false;
+            }
+            else if (value < 0)
+            {
+                ShowError("количество товаров не может быть отрицательным");
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+
+        private void ShowStatus(string status)
+        {
+            StatusLabel.Text = status;
+            StatusLabel.ForeColor = Color.Blue;
+        }
+
+        private void ShowError(string message)
+        {
+            StatusLabel.Text = $"Ошибка: {message}!";
+            StatusLabel.ForeColor = Color.Red;
         }
     }
 }

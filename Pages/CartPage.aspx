@@ -1,16 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CartPage.aspx.cs" Inherits="NetworkEquipmentStore.Pages.CartPage" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/NetworkEquipmentStore.Master" CodeBehind="CartPage.aspx.cs" Inherits="NetworkEquipmentStore.Pages.CartPage" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title></title>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div>
-        </div>
-    </form>
-</body>
-</html>
+<asp:Content runat="server" ContentPlaceHolderID="MainContent">
+    <div id="cart-root">
+        <h1>Корзина товаров</h1>
+        <% CreateCartRoot(); %>
+        <asp:Label runat="server" ID="ErrorLabel" />
+    </div>
+</asp:Content>

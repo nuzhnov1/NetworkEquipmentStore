@@ -15,13 +15,13 @@ namespace NetworkEquipmentStore.Pages
     {
 
         /// <summary>
-        /// Form1 элемент управления.
+        /// MainForm элемент управления.
         /// </summary>
         /// <remarks>
         /// Автоматически создаваемое поле.
         /// Для изменения переместите объявление поля из файла конструктора в файл кода программной части.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm Form1;
+        protected global::System.Web.UI.HtmlControls.HtmlForm MainForm;
 
         /// <summary>
         /// MainContent элемент управления.

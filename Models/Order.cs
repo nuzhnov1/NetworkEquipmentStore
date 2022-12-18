@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace NetworkEquipmentStore.Models
 {
@@ -17,6 +15,5 @@ namespace NetworkEquipmentStore.Models
         public User User { get; set; }
         public IEnumerable<ProductOrderInfo> ProductsInfo { get; set; }
         public DateTime Date { get; set; }
-        public bool IsPaid { get; set; }
     }
 }

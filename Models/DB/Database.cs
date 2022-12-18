@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data;
+﻿using System.Data;
 using Npgsql;
 
-namespace NetworkEquipmentStore.Models.Database
+namespace NetworkEquipmentStore.Models.DB
 {
     internal enum Status
     {
@@ -17,6 +13,12 @@ namespace NetworkEquipmentStore.Models.Database
 
     public static class Database
     {
+        const string HOST = "localhost";
+        const int PORT = 5432;
+        const string DATABASE = "networkshop";
+        const string USERNAME = "admin_shop";
+        const string PASSWORD = "ropkenro17";
+
         static private NpgsqlConnection Connection;
         static private Status ConnectionStatus { get; set; } = Status.ConnectionNotInitialized;
 
@@ -25,7 +27,7 @@ namespace NetworkEquipmentStore.Models.Database
         {
             if ((ConnectionStatus == Status.ConnectionNotInitialized) || (ConnectionStatus == Status.ConnectionClosed))
             {
-                string connstring = "Host=localhost;Port=5432;Database=networkshop;Username=admin_shop;Password=ropkenro17;";
+                string connstring = $"Host={HOST};Port={PORT};Database={DATABASE};Username={USERNAME};Password={PASSWORD};";
 
                 Connection = new NpgsqlConnection(connstring);
                 Connection.Open();

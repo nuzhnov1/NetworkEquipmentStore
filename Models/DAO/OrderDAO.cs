@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Data;
+using NetworkEquipmentStore.Models.DB;
 
 namespace NetworkEquipmentStore.Models.DAO
 {
-    using Database;
-
-
     public class OrderDAO
     {
-        private IEnumerable<ProductOrderInfo> GetAllProductsFromOrder(int OrderID)
+        internal IEnumerable<ProductOrderInfo> GetAllProductsFromOrder(int OrderID)
         {
             string query = $"" +
                 $"SELECT" +
@@ -39,7 +35,7 @@ namespace NetworkEquipmentStore.Models.DAO
                         Name = row["name"].ToString(),
                         Description = row["description"].ToString(),
                         Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
-                        ImagePath = $"Content/images/{row["image"]}.png",
+                        ImageName = row["image"].ToString(),
                         Price = decimal.Parse(row["price"].ToString()),
                         Quantity = int.Parse(row["total_quantity"].ToString())
                     },
@@ -53,53 +49,19 @@ namespace NetworkEquipmentStore.Models.DAO
             return products;
         }
 
-        public Order GetOrderByID(int id)
-        {
-            string query = $"SELECT * FROM ShopOrder WHERE id = {id};";
-            DataTable table = Database.Request(query);
-
-            if (table.Rows.Count == 0)
-            {
-                return null;
-            }
-
-            DataRow row = Database.Request(query).Rows[0];
-
-            int UserID = int.Parse(row["user_id"].ToString());
-            DateTime date = DateTime.Parse(row["order_date"].ToString());
-            bool IsPaid = bool.Parse(row["is_paid"].ToString());
-
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.GetUserByID(UserID);
-
-            IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
-
-            return new Order
-            {
-                ID = id,
-                User = user,
-                ProductsInfo = products,
-                Date = date,
-                IsPaid = IsPaid
-            };
-        }
-
         public IEnumerable<Order> GetAllOrders()
         {
-            string query = $"SELECT * FROM ShopOrder;";
+            string query = $"SELECT * FROM ShopOrder WHERE is_cart = FALSE;";
             DataTable table = Database.Request(query);
             List<Order> orders = new List<Order>();
 
             foreach (DataRow row in table.Rows)
             {
                 int id = int.Parse(row["id"].ToString());
-                int UserID = int.Parse(row["user_id"].ToString());
+                int userID = int.Parse(row["user_id"].ToString());
                 DateTime date = DateTime.Parse(row["order_date"].ToString());
-                bool IsPaid = bool.Parse(row["is_paid"].ToString());
-
                 UserDAO userDAO = new UserDAO();
-                User user = userDAO.GetUserByID(UserID);
-
+                User user = userDAO.GetUserByID(userID);
                 IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
 
                 Order order = new Order
@@ -107,8 +69,7 @@ namespace NetworkEquipmentStore.Models.DAO
                     ID = id,
                     User = user,
                     ProductsInfo = products,
-                    Date = date,
-                    IsPaid = IsPaid
+                    Date = date
                 };
 
                 orders.Add(order);
@@ -117,10 +78,11 @@ namespace NetworkEquipmentStore.Models.DAO
             return orders;
         }
 
-        public IEnumerable<Order> GetAllOrdersOfUser(User user)
+        public IEnumerable<Order> GetAllOrdersOfUser(int userID)
         {
-            int userID = user.ID;
-            string query = $"SELECT * FROM ShopOrder WHERE user_id = {userID};";
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.GetUserByID(userID);
+            string query = $"SELECT * FROM ShopOrder WHERE user_id = {userID} AND is_cart = FALSE;";
             DataTable table = Database.Request(query);
             List<Order> orders = new List<Order>();
 
@@ -128,8 +90,6 @@ namespace NetworkEquipmentStore.Models.DAO
             {
                 int id = int.Parse(row["id"].ToString());
                 DateTime date = DateTime.Parse(row["order_date"].ToString());
-                bool IsPaid = bool.Parse(row["is_paid"].ToString());
-
                 IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
 
                 Order order = new Order
@@ -137,8 +97,7 @@ namespace NetworkEquipmentStore.Models.DAO
                     ID = id,
                     User = user,
                     ProductsInfo = products,
-                    Date = date,
-                    IsPaid = IsPaid
+                    Date = date
                 };
 
                 orders.Add(order);
@@ -147,92 +106,33 @@ namespace NetworkEquipmentStore.Models.DAO
             return orders;
         }
 
-        public IEnumerable<Order> GetNotPaidOrdersOfUser(User user)
+        public Order InsertOrder(Order order)
         {
-            int userID = user.ID;
-            string query = $"SELECT * FROM ShopOrder WHERE user_id = {userID} AND is_paid = FALSE;";
-            DataTable table = Database.Request(query);
-            List<Order> orders = new List<Order>();
+            int userID = order.User.ID;
+            DateTime date = order.Date;
 
-            foreach (DataRow row in table.Rows)
+            string query = $"INSERT INTO ShopOrder(user_id, order_date, is_cart) VALUES ({userID}, '{date}', FALSE) RETURNING id;";
+            int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
+
+            foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
             {
-                int id = int.Parse(row["id"].ToString());
-                DateTime date = DateTime.Parse(row["order_date"].ToString());
+                int productID = productOrderInfo.Product.ID;
+                int quantity = productOrderInfo.Quantity;
 
-                IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
-
-                Order order = new Order
-                {
-                    ID = id,
-                    User = user,
-                    ProductsInfo = products,
-                    Date = date,
-                    IsPaid = false
-                };
-
-                orders.Add(order);
-            }
-
-            return orders;
-        }
-
-        public void InsertOrders(params Order[] orders)
-        {
-            foreach (Order order in orders)
-            {
-                int id = order.ID;
-                int userID = order.User.ID;
-                DateTime date = order.Date;
-                bool IsPaid = order.IsPaid;
-
-                string query = $"INSERT INTO ShopOrder(user_id, order_date, is_paid) VALUES ({userID}, '{date}', {IsPaid});";
-                Database.Execute(query);
-
-                foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
-                {
-                    int productID = productOrderInfo.Product.ID;
-                    int quantity = productOrderInfo.Quantity;
-
-                    string productsListQuery = $"INSERT INTO ShopProductsList(order_id, product_id, quantity) VALUES ({id}, {productID}, {quantity});";
-                    Database.Execute(productsListQuery);
-                }
-            }
-        }
-
-        public void UpdateOrders(params Order[] orders)
-        {
-            foreach (Order order in orders)
-            {
-                int id = order.ID;
-                int userID = order.User.ID;
-                DateTime date = order.Date;
-                bool IsPaid = order.IsPaid;
-
-                string query = $"UPDATE ShopOrder SET user_id = {userID}, order_date = '{date}', is_paid = {IsPaid} WHERE id = ${id};";
-                Database.Execute(query);
-
-                foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
-                {
-                    int productID = productOrderInfo.Product.ID;
-                    int quantity = productOrderInfo.Quantity;
-
-                    string productsListQuery = $"UPDATE ShopProductsList SET quantity = {quantity} WHERE order_id = {id} AND product_id = {productID};";
-                    Database.Execute(productsListQuery);
-                }
-            }
-        }
-
-        public void DeleteOrders(params Order[] orders)
-        {
-            foreach (Order order in orders)
-            {
-                int id = order.ID;
-
-                string productsListQuery = $"DELETE FROM ShopProductsList WHERE order_id = {id};";
+                string productsListQuery = $"INSERT INTO ShopProductsList(order_id, product_id, quantity) VALUES ({id}, {productID}, {quantity});";
                 Database.Execute(productsListQuery);
-                string query = $"DELETE FROM ShopOrder WHERE id = ${id};";
-                Database.Execute(query);
             }
+
+            order.ID = id;
+            return order;
+        }
+
+        public void DeleteOrderByID(int orderID)
+        {
+            string productsListQuery = $"DELETE FROM ShopProductsList WHERE order_id = {orderID};";
+            Database.Execute(productsListQuery);
+            string query = $"DELETE FROM ShopOrder WHERE id = ${orderID};";
+            Database.Execute(query);
         }
     }
 }

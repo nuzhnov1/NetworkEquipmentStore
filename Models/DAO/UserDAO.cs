@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Data;
+using NetworkEquipmentStore.Models.DB;
 
 namespace NetworkEquipmentStore.Models.DAO
 {
-    using Database;
-
-
     public class UserDAO
     {
-        public User GetUserByID(int id)
+        internal User GetUserByID(int id)
         {
             string query = $"SELECT * FROM ShopUser WHERE id = {id};";
             DataTable table = Database.Request(query);
-            
+
             if (table.Rows.Count == 0)
             {
                 return null;
@@ -78,46 +74,28 @@ namespace NetworkEquipmentStore.Models.DAO
             return users;
         }
 
-        public void InsertUsers(params User[] users)
+        public User InsertUser(User user)
         {
-            foreach (User user in users)
-            {
-                string name = user.Name;
-                PermissionsLevel level = user.Level;
-                string login = user.Login;
-                string PasswordHash = user.PasswordHash;
+            string name = user.Name.Replace("'", "\\'");
+            PermissionsLevel level = user.Level;
+            string login = user.Login.Replace("'", "\\'");
+            string PasswordHash = user.PasswordHash.Replace("'", "\\'");
 
-                string query = $"INSERT INTO ShopUser(name, level, login, password_hash) VALUES ('{name}', '{level}', '{login}', '{PasswordHash}');";
-                Database.Execute(query);
-            }
+            string query = $"INSERT INTO ShopUser(name, level, login, password_hash) VALUES ('{name}', '{level}', '{login}', '{PasswordHash}') RETURNING id;";
+            int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
+
+            user.ID = id;
+            return user;
         }
 
-        public void UpdateUsers(params User[] users)
+        public void DeleteUser(User user)
         {
-            foreach (User user in users)
-            {
-                int id = user.ID;
-                string name = user.Name;
-                PermissionsLevel level = user.Level;
-                string login = user.Login;
-                string PasswordHash = user.PasswordHash;
+            int id = user.ID;
 
-                string query = $"UPDATE ShopUser SET name = '{name}', level = '{level}', login = '{login}', password_hash = '{PasswordHash}' WHERE id = {id};";
-                Database.Execute(query);
-            }
-        }
-
-        public void DeleteUsers(params User[] users)
-        {
-            foreach (User user in users)
-            {
-                int id = user.ID;
-
-                string orderQuery = $"DELETE FROM ShopOrder WHERE user_id = {id};";
-                Database.Execute(orderQuery);
-                string query = $"DELETE FROM ShopUser WHERE id = {id};";
-                Database.Execute(query);
-            }
+            string orderQuery = $"DELETE FROM ShopOrder WHERE user_id = {id};";
+            Database.Execute(orderQuery);
+            string query = $"DELETE FROM ShopUser WHERE id = {id};";
+            Database.Execute(query);
         }
     }
 }

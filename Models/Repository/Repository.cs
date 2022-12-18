@@ -1,53 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using NetworkEquipmentStore.Models.DAO;
 
 namespace NetworkEquipmentStore.Models.Repository
 {
-    using NetworkEquipmentStore.Models.DAO;
-
-
     public class Repository
     {
         private readonly UserDAO userDAO = new UserDAO();
         private readonly ProductDAO productDAO = new ProductDAO();
+        private readonly CartDAO cartDAO = new CartDAO();
         private readonly OrderDAO orderDAO = new OrderDAO();
+
 
 
         public User GetUserByLogin(string login) => userDAO.GetUserByLogin(login);
         public IEnumerable<User> GetAllUsers() => userDAO.GetAllUsers();
         
-        public void RegisterUser(User user)
+        public User RegisterUser(User user)
         {
             if (GetUserByLogin(user.Login) != null)
             {
-                throw new InvalidOperationException("user with this login is already exist");
+                throw new InvalidOperationException("пользователь с таким логином уже существует");
             }
             else
             {
-                userDAO.InsertUsers(user);
+                user = userDAO.InsertUser(user);
+                cartDAO.InsertCart(user);
+
+                return user;
             }
         }
 
-        public void UpdateUser(User user) => userDAO.UpdateUsers(user);
-        public void DeleteUser(User user) => userDAO.DeleteUsers(user);
+        public void DeleteUser(User user)
+        {
+            cartDAO.DeleteCart(user);
+            userDAO.DeleteUser(user);
+        }
 
 
         public Product GetProductByID(int productID) => productDAO.GetProductByID(productID);
         public IEnumerable<Product> GetAllProducts() => productDAO.GetAllProducts();
         public int GetAllProductsCountByCategory(ProductCategory category = ProductCategory.NONE) => productDAO.GetAllProductsCountByCategory(category);
-        public void InsertProduct(Product product) => productDAO.InsertProducts(product);
-        public void UpdateProduct(Product product) => productDAO.UpdateProducts(product);
-        public void DeleteProduct(Product product) => productDAO.DeleteProducts(product);
+        public Product InsertProduct(Product product) => productDAO.InsertProduct(product);
+        public Product UpdateProduct(Product product) => productDAO.UpdateProduct(product);
         public void DeleteProductByID(int id) => productDAO.DeleteProductByID(id);
 
 
+        public Cart GetUserCart(User user) => cartDAO.GetUserCart(user.ID);
+        public Cart UpdateCart(Cart cart, User user) => cartDAO.UpdateCart(cart, user);
+
+
         public IEnumerable<Order> GetAllOrders() => orderDAO.GetAllOrders();
-        public IEnumerable<Order> GetAllOrdersOfUser(User user) => orderDAO.GetAllOrdersOfUser(user);
-        public IEnumerable<Order> GetNotPaidOrdersOfUser(User user) => orderDAO.GetNotPaidOrdersOfUser(user);
+        public IEnumerable<Order> GetAllOrdersOfUser(User user) => orderDAO.GetAllOrdersOfUser(user.ID);
         
-        public void InsertOrder(Order order)
+        public Order InsertOrder(Order order)
         {
             foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
             {
@@ -57,56 +64,25 @@ namespace NetworkEquipmentStore.Models.Repository
 
                 if (orderQuantity > totalQuantity)
                 {
-                    throw new InvalidOperationException("products quantity in order is greater than total quantity of this product");
+                    throw new InvalidOperationException($"количество товаров '{product.Name}' в заказе больше чем имеется на складе");
                 }
                 else
                 {
-                    if (order.IsPaid)
-                    {
-                        product.Quantity = totalQuantity - orderQuantity;
-                        productDAO.UpdateProducts(product);
-                    }
+                    product.Quantity = totalQuantity - orderQuantity;
+                    productDAO.UpdateProduct(product);
                 }
             }
 
             if (order.ProductsInfo.Count() != 0)
             {
-                orderDAO.InsertOrders(order);
-            }
-        }
-
-        public void UpdateOrder(Order order)
-        {
-            foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
-            {
-                Product product = productDAO.GetProductByID(productOrderInfo.Product.ID);
-                int totalQuantity = product.Quantity;
-                int orderQuantity = productOrderInfo.Quantity;
-
-                if (orderQuantity > totalQuantity)
-                {
-                    throw new InvalidOperationException("products quantity in order is greater than total quantity of this product");
-                }
-                else
-                {
-                    if (order.IsPaid)
-                    {
-                        product.Quantity = totalQuantity - orderQuantity;
-                        productDAO.UpdateProducts(product);
-                    }
-                }
-            }
-
-            if (order.ProductsInfo.Count() != 0)
-            {
-                orderDAO.UpdateOrders(order);
+                return orderDAO.InsertOrder(order);
             }
             else
             {
-                orderDAO.DeleteOrders(order);
+                return null;
             }
         }
 
-        public void DeleteOrder(Order order) => orderDAO.DeleteOrders(order);
+        public void DeleteOrderByID(int orderID) => orderDAO.DeleteOrderByID(orderID);
     }
 }

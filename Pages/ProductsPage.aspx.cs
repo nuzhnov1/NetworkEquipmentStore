@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Web.Routing;
+using NetworkEquipmentStore.Models;
+using NetworkEquipmentStore.Models.Repository;
+using NetworkEquipmentStore.Pages.Helpers;
 
 namespace NetworkEquipmentStore.Pages
 {
-    using Models;
-    using Models.Repository;
-    using NetworkEquipmentStore.Pages.Helpers;
-    using System.Web.Routing;
-
-
     public partial class ProductsPage : Page
     {
         protected const int PAGE_COUNT = 5;
@@ -43,20 +39,7 @@ namespace NetworkEquipmentStore.Pages
                 }
                 else
                 {
-                    ProductCategory category = CurrentCategory;
-                    string path;
-
-                    if (category != ProductCategory.NONE)
-                    {
-                        path = RouteTable.Routes.GetVirtualPath(null, null,
-                            new RouteValueDictionary() { { "category", category }, { "page", 1 } }).VirtualPath;
-                    }
-                    else
-                    {
-                        path = RouteTable.Routes.GetVirtualPath(null, null).VirtualPath;
-                    }
-
-                    Response.RedirectPermanent(path);
+                    Response.RedirectPermanent(GetVirtualPath(CurrentCategory, 1));
                     return 1;
                 }
             }
@@ -84,6 +67,7 @@ namespace NetworkEquipmentStore.Pages
                         Product product = repository.GetProductByID(selectedProductID);
 
                         cart.AddLine(product, 1);
+                        repository.UpdateCart(cart, user);
                     }
                 }
                 else
@@ -185,7 +169,7 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write("<div id='product-item'>");
                 Response.Write($"<h3>{product.Name}</h3>");
                 Response.Write($"<p style='font-weight: bold'>Категория товара:<span style='font-weight: normal'> {product.Category.ToWebRepresentation()}</span></p>");
-                Response.Write($"<img style='color: red' src='{product.ImagePath}' alt='Изображение не загружено' />");
+                Response.Write($"<img style='color: red' src='/Content/images/{product.ImageName}.png' alt='Изображение не загружено' />");
                 Response.Write($"<p style='font-weight: bold'>Описание товара:<span style='font-weight: normal'> {product.Description}</span></p>");
                 Response.Write($"<p style='font-weight: bold'>Цена товара:<span style='font-weight: normal'> {product.Price:c}</span></p>");
                 Response.Write($"<p style='font-weight: bold'>Количество товара на складе:<span style='font-weight: normal'> {product.Quantity}</span></p>");
