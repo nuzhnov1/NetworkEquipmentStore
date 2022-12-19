@@ -15,5 +15,9 @@ namespace NetworkEquipmentStore.Models
         public User User { get; set; }
         public IEnumerable<ProductOrderInfo> ProductsInfo { get; set; }
         public DateTime Date { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerPhone { get; set; }
+        public string CustomerEmail { get; set; }
+        public string CustomerAddress { get; set; }
     }
 }

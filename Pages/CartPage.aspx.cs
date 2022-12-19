@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Drawing;
 using System.Web.Routing;
 using System.Web.UI;
 using NetworkEquipmentStore.Models;
@@ -37,28 +36,6 @@ namespace NetworkEquipmentStore.Pages
                     {
                         Cart.RemoveLine(int.Parse(Request.Form["RemoveLine"]));
                         repository.UpdateCart(Cart, user);
-                    }
-                    else if (Request.Form["SubmitOrder"] != null)
-                    {
-                        Order order = new Order
-                        {
-                            ID = 0,
-                            User = user,
-                            ProductsInfo = Cart.Lines,
-                            Date = DateTime.Now
-                        };
-
-                        try
-                        {
-                            repository.InsertOrder(order);
-                            Cart.Clear();
-                            repository.UpdateCart(Cart, user);
-                            Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
-                        }
-                        catch (InvalidOperationException exception)
-                        {
-                            ShowError($"Ошибка: {exception.Message}!");
-                        }
                     }
                     else if (Request.Form["Clear"] != null)
                     {
@@ -124,14 +101,9 @@ namespace NetworkEquipmentStore.Pages
             Response.Write($"<span> {cart.TotalCost:c}</span>");
             Response.Write("</div>");
 
-            Response.Write("<button name='SubmitOrder'>Оформить заказ</button>");
+            string checkoutHref = RouteTable.Routes.GetVirtualPath(null, "checkout", null).VirtualPath;
+            Response.Write($"<a href='{checkoutHref}'>Перейти к оформлению заказа</a>");
             Response.Write("<button name='Clear'>Очистить корзину</button>");
-        }
-
-        private void ShowError(string status)
-        {
-            ErrorLabel.Text = status;
-            ErrorLabel.ForeColor = Color.Blue;
         }
     }
 }

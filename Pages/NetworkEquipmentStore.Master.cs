@@ -14,7 +14,7 @@ namespace NetworkEquipmentStore.Pages
             {
                 if (Request.Form["Exit"] != null)
                 {
-                    ExitButtonClick();
+                    OnExit();
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace NetworkEquipmentStore.Pages
             Response.Write("</li>");
         }
 
-        protected void ExitButtonClick()
+        protected void OnExit()
         {
             SessionHelper.RemoveUser(Session);
             Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);

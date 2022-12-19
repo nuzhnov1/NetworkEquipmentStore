@@ -59,17 +59,26 @@ namespace NetworkEquipmentStore.Models.DAO
             {
                 int id = int.Parse(row["id"].ToString());
                 int userID = int.Parse(row["user_id"].ToString());
-                DateTime date = DateTime.Parse(row["order_date"].ToString());
                 UserDAO userDAO = new UserDAO();
                 User user = userDAO.GetUserByID(userID);
                 IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
+                DateTime date = DateTime.Parse(row["order_date"].ToString());
+                string customerName = row["customer_name"].ToString();
+                string customerPhone = row["customer_phone"].ToString();
+                string customerEmail = row["customer_email"].ToString();
+                string customerAddress = row["customer_address"].ToString();
+                
 
                 Order order = new Order
                 {
                     ID = id,
                     User = user,
                     ProductsInfo = products,
-                    Date = date
+                    Date = date,
+                    CustomerName = customerName,
+                    CustomerPhone = customerPhone,
+                    CustomerEmail = customerEmail,
+                    CustomerAddress = customerAddress
                 };
 
                 orders.Add(order);
@@ -89,15 +98,23 @@ namespace NetworkEquipmentStore.Models.DAO
             foreach (DataRow row in table.Rows)
             {
                 int id = int.Parse(row["id"].ToString());
-                DateTime date = DateTime.Parse(row["order_date"].ToString());
                 IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
+                DateTime date = DateTime.Parse(row["order_date"].ToString());
+                string customerName = row["customer_name"].ToString();
+                string customerPhone = row["customer_phone"].ToString();
+                string customerEmail = row["customer_email"].ToString();
+                string customerAddress = row["customer_address"].ToString();
 
                 Order order = new Order
                 {
                     ID = id,
                     User = user,
                     ProductsInfo = products,
-                    Date = date
+                    Date = date,
+                    CustomerName = customerName,
+                    CustomerPhone = customerPhone,
+                    CustomerEmail = customerEmail,
+                    CustomerAddress = customerAddress
                 };
 
                 orders.Add(order);
@@ -110,8 +127,12 @@ namespace NetworkEquipmentStore.Models.DAO
         {
             int userID = order.User.ID;
             DateTime date = order.Date;
+            string customerName = order.CustomerName;
+            string customerPhone = order.CustomerPhone;
+            string customerEmail = order.CustomerEmail;
+            string customerAddress = order.CustomerAddress;
 
-            string query = $"INSERT INTO ShopOrder(user_id, order_date, is_cart) VALUES ({userID}, '{date}', FALSE) RETURNING id;";
+            string query = $"INSERT INTO ShopOrder(user_id, order_date, is_cart, customer_name, customer_phone, customer_email, customer_address) VALUES ({userID}, '{date}', FALSE, '{customerName}', '{customerPhone}', '{customerEmail}', '{customerAddress}') RETURNING id;";
             int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
 
             foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)

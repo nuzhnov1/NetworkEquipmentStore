@@ -10,14 +10,6 @@ namespace NetworkEquipmentStore.Pages
 {
     public partial class RegistrationPage : Page
     {
-        const int MIN_USERNAME_LENGTH = 1;
-        const int MIN_LOGIN_LENGTH = 5;
-        const int MIN_PASSWORD_LENGTH = 8;
-        const int MAX_USERNAME_LENGTH = 20;
-        const int MAX_LOGIN_LENGTH = 20;
-        const int MAX_PASSWORD_LENGTH = 20;
-
-
         private readonly Repository repository = new Repository();
 
 
@@ -25,14 +17,13 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
-            // Если пользователь уже в системе
             if (user != null)
             {
                 Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
             }
         }
 
-        protected void RegistrationButtonClick(object sender, EventArgs e)
+        protected void OnRegistration(object sender, EventArgs e)
         {
             if (!IsValidRegisterForm())
             {
@@ -74,14 +65,14 @@ namespace NetworkEquipmentStore.Pages
         {
             string username = Username.Value;
 
-            if (username.Length < MIN_USERNAME_LENGTH)
+            if (username.Length == 0)
             {
-                ShowError($"имя пользователя меньше {MIN_USERNAME_LENGTH} символов");
+                ShowError("имя пользователя не указано");
                 return false;
             }
-            else if (username.Length > MAX_USERNAME_LENGTH)
+            else if (username.Length > 20)
             {
-                ShowError($"имя пользователя больше {MAX_USERNAME_LENGTH} символов");
+                ShowError("имя пользователя больше 20 символов");
                 return false;
             }
             else if (IsContainsSpaces(username))
@@ -99,14 +90,14 @@ namespace NetworkEquipmentStore.Pages
         {
             string login = Login.Value;
 
-            if (login.Length < MIN_LOGIN_LENGTH)
+            if (login.Length < 5)
             {
-                ShowError($"логин меньше {MIN_LOGIN_LENGTH} символов");
+                ShowError("логин меньше 5 символов");
                 return false;
             }
-            else if (login.Length > MAX_LOGIN_LENGTH)
+            else if (login.Length > 20)
             {
-                ShowError($"логин больше {MAX_LOGIN_LENGTH} символов");
+                ShowError("логин больше 20 символов");
                 return false;
             }
             else if (
@@ -128,14 +119,14 @@ namespace NetworkEquipmentStore.Pages
         {
             string password = Password.Value;
 
-            if (password.Length < MIN_PASSWORD_LENGTH)
+            if (password.Length < 8)
             {
-                ShowError($"пароль меньше {MIN_PASSWORD_LENGTH} символов");
+                ShowError("пароль меньше 8 символов");
                 return false;
             }
-            else if (password.Length > MAX_PASSWORD_LENGTH)
+            else if (password.Length > 20)
             {
-                ShowError($"пароль больше {MAX_PASSWORD_LENGTH} символов");
+                ShowError("пароль больше 20 символов");
                 return false;
             }
             else if (
@@ -169,10 +160,10 @@ namespace NetworkEquipmentStore.Pages
             }
         }
 
-        private bool IsContainsLowerCase(string str) => Regex.IsMatch(str, ".*[a-z].*");
-        private bool IsContainsUpperCase(string str) => Regex.IsMatch(str, ".*[A-Z].*");
-        private bool IsContainsNotLetters(string str) => Regex.IsMatch(str, ".*[^a-zA-Z].*");
-        private bool IsContainsSpaces(string str) => Regex.IsMatch(str, ".*\\s.*");
+        private bool IsContainsLowerCase(string str) => Regex.IsMatch(str, @".*[a-z].*");
+        private bool IsContainsUpperCase(string str) => Regex.IsMatch(str, @".*[A-Z].*");
+        private bool IsContainsNotLetters(string str) => Regex.IsMatch(str, @".*[^a-zA-Z].*");
+        private bool IsContainsSpaces(string str) => Regex.IsMatch(str, @".*\s.*");
 
         private void ShowError(string message)
         {

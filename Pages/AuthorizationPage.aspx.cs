@@ -16,7 +16,6 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
-            // Если пользователь уже в системе
             if (user != null)
             {
                 Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
@@ -25,7 +24,7 @@ namespace NetworkEquipmentStore.Pages
             RegisterLink.HRef = RouteTable.Routes.GetVirtualPath(null, "registration", null).VirtualPath;
         }
 
-        protected void LoginButtonClick(object sender, EventArgs e)
+        protected void OnLogin(object sender, EventArgs e)
         {
             string login = Login.Value;
             string password = Password.Value;
@@ -42,19 +41,19 @@ namespace NetworkEquipmentStore.Pages
                 }
                 else
                 {
-                    ShowError("неверный пароль!");
+                    ShowError("неверный пароль");
                 }
             }
             else
             {
-                ShowError("неверный логин!");
+                ShowError("неверный логин");
             }
         }
 
         private void ShowError(string message)
         {
+            ErrorLabel.Text = $"Ошибка: {message}!";
             ErrorLabel.ForeColor = System.Drawing.Color.Red;
-            ErrorLabel.Text = "Ошибка: " + message;
         }
     }
 }

@@ -76,16 +76,16 @@ namespace NetworkEquipmentStore.Pages
 
                 if (IsPostBack)
                 {
-                    if (Request.Form["submit"] != null && IsValidProductForm())
+                    if (Request.Form["SubmitProduct"] != null && IsValidProductForm())
                     {
                         if (Request.Form["ProductID"] == "")
                         {
-                            InsertProduct();
+                            OnInsertProduct();
                             Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
                         }
                         else
                         {
-                            UpdateProduct();
+                            OnUpdateProduct();
                         }
                     }
                 }
@@ -116,7 +116,7 @@ namespace NetworkEquipmentStore.Pages
             Response.Write("</select>");
         }
 
-        private void InsertProduct()
+        private void OnInsertProduct()
         {
             string name = Request.Form["ProductName"];
             ProductCategory category = (ProductCategory)Enum.Parse(typeof(ProductCategory), Request.Form["ProductCategory"]);
@@ -139,7 +139,7 @@ namespace NetworkEquipmentStore.Pages
             repository.InsertProduct(newProduct);
         }
 
-        private void UpdateProduct()
+        private void OnUpdateProduct()
         {
             int id = int.Parse(Request.Form["ProductID"]);
             string name = Request.Form["ProductName"];
@@ -187,7 +187,7 @@ namespace NetworkEquipmentStore.Pages
                 newName = $"{Guid.NewGuid()}.png";
             }
 
-            string newFilePath = $"{imagesDir}\\{newName}.png";
+            string newFilePath = $"{imagesDir}\\{newName}";
             FileStream newImageFile = File.Create(newFilePath);
 
             imageFile.InputStream.CopyTo(newImageFile);
@@ -266,9 +266,7 @@ namespace NetworkEquipmentStore.Pages
 
         private bool IsValidPrice()
         {
-            decimal value;
-
-            if (!decimal.TryParse(Request.Form["ProductPrice"], out value))
+            if (!decimal.TryParse(Request.Form["ProductPrice"], out decimal value))
             {
                 ShowError("неверное значение цены товара");
                 return false;
@@ -286,9 +284,7 @@ namespace NetworkEquipmentStore.Pages
 
         private bool IsValidQuantity()
         {
-            int value;
-
-            if (!int.TryParse(Request.Form["ProductQuantity"], out value))
+            if (!int.TryParse(Request.Form["ProductQuantity"], out int value))
             {
                 ShowError("неверное значение количества товаров");
                 return false;

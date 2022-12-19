@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Routing;
+﻿using System.Web.Routing;
 
 namespace NetworkEquipmentStore.App_Start
 {
@@ -16,6 +12,7 @@ namespace NetworkEquipmentStore.App_Start
             routes.MapPageRoute("authorization", "authorization", "~/Pages/AuthorizationPage.aspx");
             routes.MapPageRoute("registration", "registration", "~/Pages/RegistrationPage.aspx");
             routes.MapPageRoute("cart", "cart", "~/Pages/CartPage.aspx");
+            routes.MapPageRoute("checkout", "checkout", "~/Pages/CheckoutPage.aspx");
             routes.MapPageRoute("orders", "orders", "~/Pages/OrdersPage.aspx");
             routes.MapPageRoute("clients", "clients", "~/Pages/ClientsPage.aspx");
             routes.MapPageRoute("product", "product", "~/Pages/ProductPage.aspx");

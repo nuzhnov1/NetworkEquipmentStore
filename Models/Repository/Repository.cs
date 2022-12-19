@@ -56,6 +56,13 @@ namespace NetworkEquipmentStore.Models.Repository
         
         public Order InsertOrder(Order order)
         {
+            // Если заказ пустой, то не вставляем его:
+            if (order.ProductsInfo.Count() == 0)
+            {
+                return null;
+            }
+
+            // Проверка правильности заказа:
             foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
             {
                 Product product = productDAO.GetProductByID(productOrderInfo.Product.ID);
@@ -66,21 +73,20 @@ namespace NetworkEquipmentStore.Models.Repository
                 {
                     throw new InvalidOperationException($"количество товаров '{product.Name}' в заказе больше чем имеется на складе");
                 }
-                else
-                {
-                    product.Quantity = totalQuantity - orderQuantity;
-                    productDAO.UpdateProduct(product);
-                }
             }
 
-            if (order.ProductsInfo.Count() != 0)
+            // Обновление данных о продуктах при правильности заказа:
+            foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
             {
-                return orderDAO.InsertOrder(order);
+                Product product = productDAO.GetProductByID(productOrderInfo.Product.ID);
+                int totalQuantity = product.Quantity;
+                int orderQuantity = productOrderInfo.Quantity;
+
+                product.Quantity = totalQuantity - orderQuantity;
+                productDAO.UpdateProduct(product);
             }
-            else
-            {
-                return null;
-            }
+
+            return orderDAO.InsertOrder(order);
         }
 
         public void DeleteOrderByID(int orderID) => orderDAO.DeleteOrderByID(orderID);
