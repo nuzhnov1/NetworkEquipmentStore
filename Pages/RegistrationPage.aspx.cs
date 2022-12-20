@@ -18,6 +18,7 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
+            // Если пользователь итак авторизирован, то перенаправляем его на главную страницу
             if (user != null)
             {
                 Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
@@ -40,7 +41,7 @@ namespace NetworkEquipmentStore.Pages
             {
                 User newUser = new User
                 {
-                    ID = 0,
+                    ID = 0,  // Данный ID обновиться
                     Name = username,
                     Level = PermissionsLevel.CLIENT,
                     Login = login,
@@ -56,6 +57,7 @@ namespace NetworkEquipmentStore.Pages
 
                 newUser = repository.RegisterUser(newUser);
                 
+                // При успешной регистрации, авторизуем пользователя и перенаправляем на главную страницу
                 SessionHelper.AuthorizeUser(Session, newUser);
                 Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
             }
@@ -78,9 +80,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("имя пользователя не указано");
                 return false;
             }
-            else if (username.Length > 20)
+            else if (username.Length > 30)
             {
-                ShowError("имя пользователя больше 20 символов");
+                ShowError("имя пользователя больше 30 символов");
                 return false;
             }
             else if (IsContainsSpaces(username))
@@ -103,9 +105,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("логин меньше 5 символов");
                 return false;
             }
-            else if (login.Length > 20)
+            else if (login.Length > 30)
             {
-                ShowError("логин больше 20 символов");
+                ShowError("логин больше 30 символов");
                 return false;
             }
             else if (
@@ -132,9 +134,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("пароль меньше 8 символов");
                 return false;
             }
-            else if (password.Length > 20)
+            else if (password.Length > 30)
             {
-                ShowError("пароль больше 20 символов");
+                ShowError("пароль больше 30 символов");
                 return false;
             }
             else if (

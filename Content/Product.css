@@ -1,0 +1,50 @@
+﻿div#product-form {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+div#product-form span {
+    width: 100%;
+    display: block;
+    text-align: left;
+    margin-bottom: 10px;
+    font-size: large;
+    font-weight: bold;
+}
+
+div#product-form textarea {
+    width: 100%;
+    display: block;
+    text-align: left;
+    margin-bottom: 10px;
+    font-size: large;
+    resize: none;
+}
+
+div#product-form img, div#product-form input,
+div#product-form select {
+    display: block;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+div#product-form button[type=submit] {
+    display: block;
+    text-align: center;
+    margin: 0 40%;
+    padding: 0 20px;
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    text-decoration: none;
+    border: none;
+    border-radius: 100px;
+    background-color: blue;
+}
+
+div#product-form button[type=submit]:hover {
+    background-color: aqua;
+}

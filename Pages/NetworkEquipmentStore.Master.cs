@@ -31,7 +31,8 @@ namespace NetworkEquipmentStore.Pages
             string clientsHref = RouteTable.Routes.GetVirtualPath(null, "clients", null).VirtualPath;
             string authorizationHref = RouteTable.Routes.GetVirtualPath(null, "authorization", null).VirtualPath;
 
-            
+
+            // Если текущая страница - главная
             if (Page is ProductsPage)
             {
                 Response.Write($"<li><a href='{nullHref}' class='selected'>Главная</a></li>");
@@ -41,48 +42,58 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write($"<li><a href='{mainHref}'>Главная</a></li>");
             }
 
+            // Если текущая страница - главная, и пользователь - клиент
             if (Page is CartPage && user != null && user.Level == PermissionsLevel.CLIENT)
             {
                 Response.Write($"<li><a href='{nullHref}' class='selected'>Корзина</a></li>");
             }
+            // Если пользователь - клиент, но текущая страница другая
             else if (user != null && user.Level == PermissionsLevel.CLIENT)
             {
                 Response.Write($"<li><a href='{cartHref}'>Корзина</a></li>");
             }
 
+            // Если текущая страница - страница для добавления/обновления продукта, и пользователь - админ
             if (Page is ProductPage && user != null && user.Level == PermissionsLevel.ADMIN)
             {
                 Response.Write($"<li><a href='{nullHref}' class='selected'>Добавить продукт</a></li>");
             }
+            // Если пользователь - админ, но текущая страница другая
             else if (user != null && user.Level == PermissionsLevel.ADMIN)
             {
                 Response.Write($"<li><a href='{addProductHref}'>Добавить продукт</a></li>");
             }
 
+            // Если текущая страница - страница заказов, и пользователь залогинен
             if (Page is OrdersPage && user != null)
             {
                 Response.Write($"<li><a href='{nullHref}' class='selected'>Список заказов</a></li>");
             }
+            // Если пользователь залогинен, но страница другая
             else if (user != null)
             {
                 Response.Write($"<li><a href='{ordersHref}'>Список заказов</a></li>");
             }
 
+            // Если текущая страница - страница списка клиентов, и пользователь - админ
             if (Page is ClientsPage && user != null && user.Level == PermissionsLevel.ADMIN)
             {
                 Response.Write($"<li><a href='{nullHref}' class='selected'>Список клиентов</a></li>");
             }
+            // Если пользователь - админ, но текущая страница другая
             else if (user != null && user.Level == PermissionsLevel.ADMIN)
             {
                 Response.Write($"<li><a href='{clientsHref}'>Список клиентов</a></li>");
             }
 
             Response.Write("<li id='dropdown'>");
-            
+
+            // Если текущая страница - страница с регистрацией или авторизацией, и пользователь не залогинен
             if ((Page is AuthorizationPage || Page is RegistrationPage) && user == null)
             {
                 Response.Write($"<a href='{nullHref}' class='selected'>Войти</a>");
             }
+            // Если текущая страница другая, но пользователь также не залогинен
             else if (user == null)
             {
                 Response.Write($"<a href='{authorizationHref}'>Войти</a>");

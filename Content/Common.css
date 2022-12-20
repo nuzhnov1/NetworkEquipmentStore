@@ -1,0 +1,53 @@
+﻿h1 {
+    text-align: center;
+    border-bottom: 3px solid #111;
+    margin: 0;
+    padding: 10px;
+}
+
+span#empty-label {
+    width: 100%;
+    display: table;
+    text-align: center;
+    font-style: oblique;
+    font-size: xx-large;
+    font-weight: normal;
+    margin: 5% 0;
+}
+
+div#content-root {
+    width: 100%;
+    display: table;
+    border-bottom: 3px solid #111;
+}
+
+div#list-item {
+    padding: 0 10px 10px 10px;
+    border-bottom: 3px solid #111;
+}
+
+div#list-item:last-child {
+    padding: 0 10px 10px 10px;
+    border: none;
+}
+
+div#list-item span.product-added {
+    display: block;
+    color: lightgreen;
+    font-size: large;
+}
+
+div#list-item button {
+    display: block;
+    border: none;
+    background: inherit;
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+div#list-item button:hover {
+    color: aqua;
+}

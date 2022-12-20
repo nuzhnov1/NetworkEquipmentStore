@@ -1,0 +1,38 @@
+﻿div#products-categories {
+    width: 15%;
+    display: table-cell;
+    box-sizing: border-box;
+    padding: 0 10px;
+    border-right: 3px solid #111;
+}
+
+div#products-categories ul {
+    margin: 0;
+    padding: 0;
+}
+
+div#products-categories h3 {
+    text-align: center;
+}
+
+li#category-item {
+    list-style-type: none;
+    padding: 0 0 20px 0;
+}
+
+li#category-item a {
+    font-size: large;
+    font-style: oblique;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+li#category-item a.category-selected {
+    cursor: text;
+    color: lightgreen;
+}
+
+li#category-item:hover a:not(a.category-selected) {
+    color: aqua;
+}

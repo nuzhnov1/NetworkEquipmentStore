@@ -14,7 +14,7 @@ namespace NetworkEquipmentStore.Pages
 {
     public partial class ProductPage : Page
     {
-        const int MAX_IMAGE_SIZE = 1024 * 1024 * 1;  // 1 MB
+        const int MAX_IMAGE_SIZE = 1024 * 1024 * 1;  // Максимальный размер изображения - 1 MB
 
 
 
@@ -73,8 +73,10 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
+            // Если пользователь - не администратор, то перенаправляем его на главную страницу
             if (user != null && user.Level == PermissionsLevel.ADMIN)
             {
+                // Если идёт добавления нового товара, то добавление изображения обязательно
                 if (CurrentProductID == null)
                 {
                     ProductImageFile.Attributes.Add("required", "");
@@ -84,11 +86,13 @@ namespace NetworkEquipmentStore.Pages
                 {
                     if (Request.Form["SubmitProduct"] != null && IsValidProductForm())
                     {
-                        if (Request.Form["ProductID"] == "")
+                        // Если добавляется новый товар
+                        if (CurrentProduct == null)
                         {
                             OnInsertProduct();
                             Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
                         }
+                        // Если обновляется существующий
                         else
                         {
                             OnUpdateProduct();
@@ -188,14 +192,17 @@ namespace NetworkEquipmentStore.Pages
             string[] filenames = Directory.GetFiles(imagesDir);
             string newName = imageFile.FileName;
 
+            // Генерируем уникальное имя для файла изображения
             while (filenames.Contains($"{imagesDir}\\{newName}"))
             {
                 newName = $"{Guid.NewGuid()}.png";
             }
 
+            // Создаём файл изображения
             string newFilePath = $"{imagesDir}\\{newName}";
             FileStream newImageFile = File.Create(newFilePath);
 
+            // Сохраняем изображение в новый файл
             imageFile.InputStream.CopyTo(newImageFile);
             newImageFile.Close();
 
@@ -217,9 +224,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("имя товара не может быть пустым");
                 return false;
             }
-            else if (name.Length > 100)
+            else if (name.Length > 60)
             {
-                ShowError("имя товара не должно превышать 100 символов");
+                ShowError("имя товара не должно превышать 60 символов");
                 return false;
             }
             else
@@ -237,9 +244,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("превышен максимальный размер изображения в 1 МБ");
                 return false;
             }
-            else if (postedImage.FileName.Length > 4000)
+            else if (postedImage.FileName.Length > 60)
             {
-                ShowError($"превышено максимальное число символов в названии изображения в 4000 символов");
+                ShowError($"превышено максимальное число символов в названии изображения в 60 символов");
                 return false;
             }
             else if (!IsValidFileName(postedImage.FileName))

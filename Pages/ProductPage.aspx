@@ -2,7 +2,7 @@
 <%@ Import Namespace="NetworkEquipmentStore.Models" %>
 
 <asp:Content runat="server" ContentPlaceHolderID="MainContent">
-    <div id="product-root">
+    <div id="content-root">
         <% Product product = CurrentProduct; %>
         <h1><%= (product == null) ? "Добавление нового продукта" : $"Изменение продукта '{product.Name}'" %></h1>
         <div id="product-form">

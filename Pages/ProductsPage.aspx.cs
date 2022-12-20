@@ -44,7 +44,7 @@ namespace NetworkEquipmentStore.Pages
 
                     if (page > 0)
                     {
-                        _selectedPage = page > MaxPage ? MaxPage : page;
+                        _selectedPage = page > LastPage ? LastPage : page;
                     }
                     else
                     {
@@ -57,17 +57,17 @@ namespace NetworkEquipmentStore.Pages
             }
         }
 
-        private int? _maxPage = null;
-        private int MaxPage
+        private int? _lastPage = null;
+        private int LastPage  // Последняя страница для выбранных товаров данной категории
         {
             get
             {
-                if (_maxPage == null)
+                if (_lastPage == null)
                 {
-                    _maxPage = (int)Math.Ceiling((decimal)repository.GetAllProductsCountByCategory(SelectedCategory) / PRODUCTS_COUNT);
+                    _lastPage = (int)Math.Ceiling((decimal)repository.GetAllProductsCountByCategory(SelectedCategory) / PRODUCTS_COUNT);
                 }
 
-                return (int)_maxPage;
+                return (int)_lastPage;
             }
         }
 
@@ -78,6 +78,7 @@ namespace NetworkEquipmentStore.Pages
             {
                 if (_selectedProducts == null)
                 {
+                    // Выбираем товары данной категории на данной странице
                     _selectedProducts = repository.GetAllProducts()
                         .Where(item => SelectedCategory == ProductCategory.NONE || item.Category == SelectedCategory)
                         .OrderBy(item => item.ID)
@@ -94,6 +95,7 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
+            // Если пользователь авторизован и от него пришёл ответ
             if (IsPostBack && user != null)
             {
                 if (user.Level == PermissionsLevel.CLIENT)
@@ -144,7 +146,7 @@ namespace NetworkEquipmentStore.Pages
         protected void CreatePagesList()
         {
             int selectedPage = SelectedPage;
-            int maxPage = MaxPage;
+            int maxPage = LastPage;
             ProductCategory selectedCategory = SelectedCategory;
 
             if (maxPage == 0)
@@ -204,7 +206,7 @@ namespace NetworkEquipmentStore.Pages
 
             foreach (Product product in SelectedProducts)
             {
-                Response.Write("<div id='product-item'>");
+                Response.Write("<div id='list-item'>");
                 Response.Write($"<h3>{product.Name}</h3>");
                 Response.Write($"<p style='font-weight: bold'>Категория товара:<span style='font-weight: normal'> {product.Category.ToWebRepresentation()}</span></p>");
                 Response.Write($"<img style='color: red' src='/Content/images/{product.ImageName}' alt='Изображение не загружено' />");
@@ -233,13 +235,18 @@ namespace NetworkEquipmentStore.Pages
                             new RouteValueDictionary() { { "id", product.ID } }).VirtualPath;
 
                         Response.Write("<div id='action-buttons'>");
-                        Response.Write($"<a href='{updatePath}'>Обновить товар</a>");
-                        Response.Write($"<button name='RemoveProduct' value='{product.ID}' type='submit'>Удалить товар</button>");
+                        Response.Write($"<a id='update-product' href='{updatePath}'>Обновить товар</a>");
+                        Response.Write($"<button id='delete-product' name='RemoveProduct' value='{product.ID}' type='submit'>Удалить товар</button>");
                         Response.Write("</div>");
                     }
                 }
 
                 Response.Write("</div>");
+            }
+
+            if (SelectedProducts.Count() == 0)
+            {
+                Response.Write("<span id='empty-label'>Список товаров пуст</span>");
             }
         }
     }

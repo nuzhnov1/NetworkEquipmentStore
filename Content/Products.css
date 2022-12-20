@@ -1,110 +1,10 @@
-﻿div#products-root {
-    width: 100%;
-    display: table;
-    border-bottom: 3px solid #111;
-}
-
-
-div#products-categories {
-    width: 15%;
-    display: table-cell;
-    box-sizing: border-box;
-    padding: 0 10px;
-    border-right: 3px solid #111;
-}
-
-div#products-categories ul {
-    margin: 0;
-    padding: 0;
-}
-
-div#products-categories h3 {
-    text-align: center;
-}
-
-li#category-item {
-    list-style-type: none;
-    padding: 0 0 20px 0;
-}
-
-li#category-item a {
-    font-size: large;
-    font-style: oblique;
-    color: white;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-li#category-item a.category-selected {
-    cursor: text;
-    color: lightgreen;
-}
-
-li#category-item:hover a:not(a.category-selected) {
-    color: aqua;
-}
-
-
-div#products-container {
+﻿div#products-container {
     width: 85%;
     display: table-cell;
     box-sizing: border-box;
 }
 
-div#products-container h1 {
-    text-align: center;
-}
-
-div#pages {
-    text-align: left;
-    margin: 4px 0;
-    padding: 4px 10px;
-    border-top: 3px solid #111;
-}
-
-div#pages a {
-    text-decoration: none;
-    color: white;
-    cursor: pointer;
-    padding: 0 2px;
-}
-
-div#pages a.page-selected {
-    cursor: text;
-    color: lightgreen;
-}
-
-div#pages a:not(a.page-selected):hover {
-    color: aqua;
-}
-
-div#product-item {
-    padding: 0 10px 10px 10px;
-    border-top: 3px solid #111;
-}
-
-div#product-item span.product-added {
-    display: block;
-    color: lightgreen;
-    font-size: large;
-}
-
-div#product-item button {
-    display: block;
-    border: none;
-    background: inherit;
-    color: white;
-    font-style: oblique;
-    font-size: large;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-div#product-item button:hover {
-    color: aqua;
-}
-
-div#action-buttons {
+#products-container #action-buttons {
     width: 100%;
     display: block;
 }
@@ -120,7 +20,7 @@ div#action-buttons button[type=submit], div#action-buttons a {
     border-radius: 100px;
 }
 
-div#action-buttons button[type=submit] {
+div#action-buttons button[type=submit]#delete-product {
     width: 30%;
     margin: 0 5% 0 10%;
     display: inline-block;
@@ -128,13 +28,13 @@ div#action-buttons button[type=submit] {
     background-color: darkred;
 }
 
-div#action-buttons a {
+div#action-buttons a#update-product {
     width: 30%;
     margin: 0 10% 0 5%;
     display: inline-block;
     background-color: darkgreen;
 }
 
-div#action-buttons button[type=submit]:hover, div#action-buttons a:hover {
+div#action-buttons button[type=submit]#delete-product:hover, div#action-buttons a#update-product:hover {
     background-color: aqua;
 }

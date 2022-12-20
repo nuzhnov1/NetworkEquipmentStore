@@ -1,0 +1,25 @@
+﻿div#pages {
+    text-align: left;
+    padding: 4px 10px;
+    border-bottom: 3px solid #111;
+}
+
+div#pages:last-child {
+    border-bottom: none;
+}
+
+div#pages a {
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    padding: 0 2px;
+}
+
+div#pages a.page-selected {
+    cursor: text;
+    color: lightgreen;
+}
+
+div#pages a:not(a.page-selected):hover {
+    color: aqua;
+}

@@ -8,7 +8,11 @@
     <title>Интернет-магазин "Сетевое оборудование"</title>
 
     <link rel="stylesheet" href="/Content/NetworkEquipmentStore.Master.css" />
+    <link rel="stylesheet" href="/Content/Common.css" />
     <link rel="stylesheet" href="/Content/Products.css" />
+    <link rel="stylesheet" href="/Content/Product.css" />
+    <link rel="stylesheet" href="/Content/Pages.css" />
+    <link rel="stylesheet" href="/Content/Categories.css" />
     <link rel="stylesheet" href="/Content/Authorization.css" />
 
     <script src="Scripts/product.js"></script>

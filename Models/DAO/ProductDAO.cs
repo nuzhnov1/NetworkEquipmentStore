@@ -74,7 +74,7 @@ namespace NetworkEquipmentStore.Models.DAO
         public Product InsertProduct(Product product)
         {
             string name = product.Name.Replace("'", "\\'");
-            string description = product.Description.Replace("'", "\\'");
+            string description = product.Description.Replace("'", "\\'").Replace(@"\", @"\\");
             ProductCategory category = product.Category;
             string image = product.ImageName.Replace("'", "\\'");
             string price = product.Price.ToString().Replace(',', '.');
