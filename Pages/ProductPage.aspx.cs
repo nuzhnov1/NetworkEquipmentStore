@@ -44,20 +44,26 @@ namespace NetworkEquipmentStore.Pages
             }
         }
 
+        private Product _currentProduct = null;
         protected Product CurrentProduct
         {
             get
             {
-                int? productID = CurrentProductID;
+                if (_currentProduct == null)
+                {
+                    int? productID = CurrentProductID;
 
-                if (productID == null)
-                {
-                    return null;
-                } 
-                else
-                {
-                    return repository.GetProductByID((int)productID);
+                    if (productID == null)
+                    {
+                        _currentProduct = null;
+                    }
+                    else
+                    {
+                        _currentProduct = repository.GetProductByID((int)productID);
+                    }
                 }
+
+                return _currentProduct;
             }
         }
 

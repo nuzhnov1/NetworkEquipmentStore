@@ -34,14 +34,18 @@ namespace NetworkEquipmentStore.Pages
 
             if (user != null)
             {
-                if (passwordHash == user.PasswordHash)
+                if (passwordHash == user.PasswordHash && !user.IsBanned)
                 {
                     SessionHelper.AuthorizeUser(Session, user);
                     Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
                 }
-                else
+                else if (passwordHash != user.PasswordHash)
                 {
                     ShowError("неверный пароль");
+                }
+                else
+                {
+                    ShowError("вы забанены");
                 }
             }
             else

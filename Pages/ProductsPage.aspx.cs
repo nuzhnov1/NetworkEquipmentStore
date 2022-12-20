@@ -11,47 +11,84 @@ namespace NetworkEquipmentStore.Pages
 {
     public partial class ProductsPage : Page
     {
-        protected const int PAGE_COUNT = 5;
-        protected const int PRODUCT_COUNT = 5;
+        private const int PAGE_COUNT = 5;
+        private const int PRODUCTS_COUNT = 5;
 
 
         private readonly Repository repository = new Repository();
 
-        private ProductCategory CurrentCategory
+        private ProductCategory? _selectedCategory = null;
+        private ProductCategory SelectedCategory
         {
             get
             {
-                string reqValue = (string)RouteData.Values["category"] ?? Request.QueryString["category"];
-                return reqValue.ToProductCategoryFromUrl();
+                if (_selectedCategory == null)
+                {
+                    string reqValue = (string)RouteData.Values["category"] ?? Request.QueryString["category"];
+                    _selectedCategory = reqValue.ToProductCategoryFromUrl();
+                }
+
+                return (ProductCategory)_selectedCategory;
             }
         }
 
-        private int CurrentPage
+        private int? _selectedPage = null;
+        private int SelectedPage
         {
             get
             {
-                string reqValue = (string)RouteData.Values["page"] ?? Request.QueryString["page"];
-                int page = reqValue != null && int.TryParse(reqValue, out page) ? page : 1;
+                if (_selectedCategory == null)
+                {
+                    string reqValue = (string)RouteData.Values["page"] ?? Request.QueryString["page"];
+                    int page = reqValue != null && int.TryParse(reqValue, out page) ? page : 1;
 
-                if (page > 0)
-                {
-                    return page > MaxPage ? MaxPage : page;
+                    if (page > 0)
+                    {
+                        _selectedPage = page > MaxPage ? MaxPage : page;
+                    }
+                    else
+                    {
+                        Response.RedirectPermanent(GetVirtualPath(SelectedCategory, 1));
+                        _selectedPage = 1;
+                    }
                 }
-                else
-                {
-                    Response.RedirectPermanent(GetVirtualPath(CurrentCategory, 1));
-                    return 1;
-                }
+
+                return (int)_selectedPage;
             }
         }
 
-        protected int MaxPage => (int)Math.Ceiling((decimal)repository.GetAllProductsCountByCategory(CurrentCategory) / PRODUCT_COUNT);
+        private int? _maxPage = null;
+        private int MaxPage
+        {
+            get
+            {
+                if (_maxPage == null)
+                {
+                    _maxPage = (int)Math.Ceiling((decimal)repository.GetAllProductsCountByCategory(SelectedCategory) / PRODUCTS_COUNT);
+                }
 
-        private IEnumerable<Product> CurrentProducts => repository.GetAllProducts()
-            .Where(item => CurrentCategory == ProductCategory.NONE || item.Category == CurrentCategory)
-            .OrderBy(item => item.ID)
-            .Skip((CurrentPage - 1) * PRODUCT_COUNT)
-            .Take(PRODUCT_COUNT);
+                return (int)_maxPage;
+            }
+        }
+
+        private IEnumerable<Product> _selectedProducts = null;
+        private IEnumerable<Product> SelectedProducts
+        {
+            get
+            {
+                if (_selectedProducts == null)
+                {
+                    _selectedProducts = repository.GetAllProducts()
+                        .Where(item => SelectedCategory == ProductCategory.NONE || item.Category == SelectedCategory)
+                        .OrderBy(item => item.ID)
+                        .Skip((SelectedPage - 1) * PRODUCTS_COUNT)
+                        .Take(PRODUCTS_COUNT);
+                }
+
+                return _selectedProducts;
+            }
+        }
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -63,11 +100,12 @@ namespace NetworkEquipmentStore.Pages
                 {
                     if (int.TryParse(Request.Form["AddToCart"], out int selectedProductID))
                     {
-                        Cart cart = SessionHelper.GetCart(Session);
-                        Product product = repository.GetProductByID(selectedProductID);
-
-                        cart.AddLine(product, 1);
-                        repository.UpdateCart(cart, user);
+                        user.Cart.AddLine(new CartLine
+                        {
+                            Product = repository.GetProductByID(selectedProductID),
+                            Quantity = 1
+                        });
+                        repository.UpdateUser(user);
                     }
                 }
                 else
@@ -105,37 +143,37 @@ namespace NetworkEquipmentStore.Pages
 
         protected void CreatePagesList()
         {
-            int currentPage = CurrentPage;
+            int selectedPage = SelectedPage;
             int maxPage = MaxPage;
-            ProductCategory currentCategory = CurrentCategory;
+            ProductCategory selectedCategory = SelectedCategory;
 
             if (maxPage == 0)
             {
                 return;
             }
 
-            Response.Write("<div id='products-pages'>");
+            Response.Write("<div id='pages'>");
             Response.Write("<span>Страницы: </span>");
 
-            if (currentPage > PAGE_COUNT)
+            if (selectedPage > PAGE_COUNT)
             {
-                string path = GetVirtualPath(currentCategory, 1);
+                string path = GetVirtualPath(selectedCategory, 1);
                 Response.Write($"<a href='{path}'>В начало</a>");
             }
 
-            if (currentPage > 1)
+            if (selectedPage > 1)
             {
-                string path = GetVirtualPath(currentCategory, currentPage - 1);
+                string path = GetVirtualPath(selectedCategory, selectedPage - 1);
                 Response.Write($"<a href='{path}'>Назад</a>");
             }
 
-            int startPage = currentPage - (currentPage - 1) % PAGE_COUNT;
+            int startPage = selectedPage - (selectedPage - 1) % PAGE_COUNT;
             int endPage = Math.Min(startPage + PAGE_COUNT, maxPage);
             for (int i = startPage; i <= endPage; i++)
             {
-                string path = GetVirtualPath(currentCategory, i);
+                string path = GetVirtualPath(selectedCategory, i);
 
-                if (i == currentPage)
+                if (i == selectedPage)
                 {
                     Response.Write($"<a href='javascript:void(0)' class='page-selected'>{i}</a>");
                 }
@@ -145,15 +183,15 @@ namespace NetworkEquipmentStore.Pages
                 }
             }
 
-            if (currentPage < maxPage)
+            if (selectedPage < maxPage)
             {
-                string path = GetVirtualPath(currentCategory, currentPage + 1);
+                string path = GetVirtualPath(selectedCategory, selectedPage + 1);
                 Response.Write($"<a href='{path}'>Вперёд</a>");
             }
 
-            if (currentPage <= maxPage - PAGE_COUNT)
+            if (selectedPage <= maxPage - PAGE_COUNT)
             {
-                string path = GetVirtualPath(currentCategory, maxPage);
+                string path = GetVirtualPath(selectedCategory, maxPage);
                 Response.Write($"<a href='{path}'>В конец</a>");
             }
 
@@ -164,12 +202,12 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
-            foreach (Product product in CurrentProducts)
+            foreach (Product product in SelectedProducts)
             {
                 Response.Write("<div id='product-item'>");
                 Response.Write($"<h3>{product.Name}</h3>");
                 Response.Write($"<p style='font-weight: bold'>Категория товара:<span style='font-weight: normal'> {product.Category.ToWebRepresentation()}</span></p>");
-                Response.Write($"<img style='color: red' src='/Content/images/{product.ImageName}.png' alt='Изображение не загружено' />");
+                Response.Write($"<img style='color: red' src='/Content/images/{product.ImageName}' alt='Изображение не загружено' />");
                 Response.Write($"<p style='font-weight: bold'>Описание товара:<span style='font-weight: normal'> {product.Description}</span></p>");
                 Response.Write($"<p style='font-weight: bold'>Цена товара:<span style='font-weight: normal'> {product.Price:c}</span></p>");
                 Response.Write($"<p style='font-weight: bold'>Количество товара на складе:<span style='font-weight: normal'> {product.Quantity}</span></p>");
@@ -178,7 +216,7 @@ namespace NetworkEquipmentStore.Pages
                 {
                     if (user.Level == PermissionsLevel.CLIENT)
                     {
-                        bool isProductInChart = SessionHelper.GetCart(Session).IsInCart(product);
+                        bool isProductInChart = user.Cart.IsInCart(product);
 
                         if (isProductInChart)
                         {

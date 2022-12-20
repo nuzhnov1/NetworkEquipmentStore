@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Data;
 using NetworkEquipmentStore.Models.DB;
@@ -7,20 +8,9 @@ namespace NetworkEquipmentStore.Models.DAO
 {
     public class OrderDAO
     {
-        internal IEnumerable<ProductOrderInfo> GetAllProductsFromOrder(int OrderID)
+        private IEnumerable<ProductOrderInfo> GetAllProductsFromOrder(int orderID)
         {
-            string query = $"" +
-                $"SELECT" +
-                $"  sp.id AS id," +
-                $"  name," +
-                $"  description," +
-                $"  category," +
-                $"  image," +
-                $"  price," +
-                $"  sp.quantity AS total_quantity, " +
-                $"  spl.quantity AS order_quantity " +
-                $"FROM ShopProduct AS sp JOIN ShopProductsList AS spl ON sp.id = spl.product_id " +
-                $"WHERE spl.order_id = {OrderID};";
+            string query = $"SELECT * FROM ShopProductOrderInfo WHERE order_id = {orderID};";
 
             DataTable table = Database.Request(query);
             List<ProductOrderInfo> products = new List<ProductOrderInfo>();
@@ -29,18 +19,10 @@ namespace NetworkEquipmentStore.Models.DAO
             {
                 ProductOrderInfo product = new ProductOrderInfo
                 {
-                    Product = new Product
-                    {
-                        ID = int.Parse(row["id"].ToString()),
-                        Name = row["name"].ToString(),
-                        Description = row["description"].ToString(),
-                        Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
-                        ImageName = row["image"].ToString(),
-                        Price = decimal.Parse(row["price"].ToString()),
-                        Quantity = int.Parse(row["total_quantity"].ToString())
-                    },
-
-                    Quantity = int.Parse(row["order_quantity"].ToString())
+                    ProductName = row["product_name"].ToString(),
+                    ProductCategory = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["product_category"].ToString()),
+                    ProductPrice = decimal.Parse(row["product_price"].ToString()),
+                    Quantity = int.Parse(row["quantity"].ToString()),
                 };
 
                 products.Add(product);
@@ -51,7 +33,7 @@ namespace NetworkEquipmentStore.Models.DAO
 
         public IEnumerable<Order> GetAllOrders()
         {
-            string query = $"SELECT * FROM ShopOrder WHERE is_cart = FALSE;";
+            string query = $"SELECT * FROM ShopOrder;";
             DataTable table = Database.Request(query);
             List<Order> orders = new List<Order>();
 
@@ -61,24 +43,23 @@ namespace NetworkEquipmentStore.Models.DAO
                 int userID = int.Parse(row["user_id"].ToString());
                 UserDAO userDAO = new UserDAO();
                 User user = userDAO.GetUserByID(userID);
-                IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
                 DateTime date = DateTime.Parse(row["order_date"].ToString());
                 string customerName = row["customer_name"].ToString();
                 string customerPhone = row["customer_phone"].ToString();
                 string customerEmail = row["customer_email"].ToString();
                 string customerAddress = row["customer_address"].ToString();
-                
+                IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
 
                 Order order = new Order
                 {
                     ID = id,
                     User = user,
-                    ProductsInfo = products,
-                    Date = date,
+                    OrderDate = date,
                     CustomerName = customerName,
                     CustomerPhone = customerPhone,
                     CustomerEmail = customerEmail,
-                    CustomerAddress = customerAddress
+                    CustomerAddress = customerAddress,
+                    ProductsInfo = products
                 };
 
                 orders.Add(order);
@@ -87,60 +68,41 @@ namespace NetworkEquipmentStore.Models.DAO
             return orders;
         }
 
-        public IEnumerable<Order> GetAllOrdersOfUser(int userID)
+        public int GetAllOrdersCount(User user = null)
         {
-            UserDAO userDAO = new UserDAO();
-            User user = userDAO.GetUserByID(userID);
-            string query = $"SELECT * FROM ShopOrder WHERE user_id = {userID} AND is_cart = FALSE;";
-            DataTable table = Database.Request(query);
-            List<Order> orders = new List<Order>();
-
-            foreach (DataRow row in table.Rows)
+            string query;
+            if (user != null)
             {
-                int id = int.Parse(row["id"].ToString());
-                IEnumerable<ProductOrderInfo> products = GetAllProductsFromOrder(id);
-                DateTime date = DateTime.Parse(row["order_date"].ToString());
-                string customerName = row["customer_name"].ToString();
-                string customerPhone = row["customer_phone"].ToString();
-                string customerEmail = row["customer_email"].ToString();
-                string customerAddress = row["customer_address"].ToString();
-
-                Order order = new Order
-                {
-                    ID = id,
-                    User = user,
-                    ProductsInfo = products,
-                    Date = date,
-                    CustomerName = customerName,
-                    CustomerPhone = customerPhone,
-                    CustomerEmail = customerEmail,
-                    CustomerAddress = customerAddress
-                };
-
-                orders.Add(order);
+                query = $"SELECT COUNT(*) AS result FROM ShopOrder WHERE user_id = {user.ID};";
+            }
+            else
+            {
+                query = "SELECT COUNT(*) AS result FROM ShopOrder;";
             }
 
-            return orders;
+            return int.Parse(Database.Request(query).Rows[0]["result"].ToString());
         }
 
         public Order InsertOrder(Order order)
         {
             int userID = order.User.ID;
-            DateTime date = order.Date;
-            string customerName = order.CustomerName;
-            string customerPhone = order.CustomerPhone;
-            string customerEmail = order.CustomerEmail;
-            string customerAddress = order.CustomerAddress;
+            DateTime orderDate = order.OrderDate;
+            string customerName = order.CustomerName.Replace("'", "\\'");
+            string customerPhone = order.CustomerPhone.Replace("'", "\\'");
+            string customerEmail = order.CustomerEmail.Replace("'", "\\'");
+            string customerAddress = order.CustomerAddress.Replace("'", "\\'");
 
-            string query = $"INSERT INTO ShopOrder(user_id, order_date, is_cart, customer_name, customer_phone, customer_email, customer_address) VALUES ({userID}, '{date}', FALSE, '{customerName}', '{customerPhone}', '{customerEmail}', '{customerAddress}') RETURNING id;";
+            string query = $"INSERT INTO ShopOrder(user_id, order_date, customer_name, customer_phone, customer_email, customer_address) VALUES ({userID}, '{orderDate}', '{customerName}', '{customerPhone}', '{customerEmail}', '{customerAddress}') RETURNING id;";
             int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
 
             foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
             {
-                int productID = productOrderInfo.Product.ID;
+                string productName = productOrderInfo.ProductName.Replace("'", "\\'");
+                ProductCategory productCategory = productOrderInfo.ProductCategory;
+                string productPrice = productOrderInfo.ProductPrice.ToString().Replace(',', '.');
                 int quantity = productOrderInfo.Quantity;
 
-                string productsListQuery = $"INSERT INTO ShopProductsList(order_id, product_id, quantity) VALUES ({id}, {productID}, {quantity});";
+                string productsListQuery = $"INSERT INTO ShopProductOrderInfo(order_id, product_name, product_category, product_price, quantity) VALUES ({id}, '{productName}', '{productCategory}', {productPrice}, {quantity});";
                 Database.Execute(productsListQuery);
             }
 
@@ -150,10 +112,21 @@ namespace NetworkEquipmentStore.Models.DAO
 
         public void DeleteOrderByID(int orderID)
         {
-            string productsListQuery = $"DELETE FROM ShopProductsList WHERE order_id = {orderID};";
-            Database.Execute(productsListQuery);
-            string query = $"DELETE FROM ShopOrder WHERE id = ${orderID};";
+            string productOrderInfoQuery = $"DELETE FROM ShopProductOrderInfo WHERE order_id = {orderID};";
+            Database.Execute(productOrderInfoQuery);
+            string query = $"DELETE FROM ShopOrder WHERE id = {orderID};";
             Database.Execute(query);
+        }
+
+        public void DeleteAllOrders(int? userID)
+        {
+            IEnumerable<Order> orders = GetAllOrders()
+                .Where(order => userID == null || order.User.ID == userID);
+
+            foreach (Order order in orders)
+            {
+                DeleteOrderByID(order.ID);
+            }
         }
     }
 }

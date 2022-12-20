@@ -1,16 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ClientsPage.aspx.cs" Inherits="NetworkEquipmentStore.Pages.ClientsPage" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Pages/NetworkEquipmentStore.Master" CodeBehind="ClientsPage.aspx.cs" Inherits="NetworkEquipmentStore.Pages.ClientsPage" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title></title>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div>
-        </div>
-    </form>
-</body>
-</html>
+<asp:Content runat="server" ContentPlaceHolderID="MainContent">
+    <div id="users-root">
+        <h1>Список пользователей</h1>
+        <% CreateUsersRoot(); %>
+    </div>
+</asp:Content>

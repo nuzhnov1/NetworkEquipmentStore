@@ -151,7 +151,6 @@
     <Compile Include="Models\PermissionsLevel.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductCategory.cs" />
-    <Compile Include="Models\ProductCategoryExtensions.cs" />
     <Compile Include="Models\Repository\Repository.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Pages\AuthorizationPage.aspx.cs">

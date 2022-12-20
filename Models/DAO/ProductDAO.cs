@@ -76,7 +76,7 @@ namespace NetworkEquipmentStore.Models.DAO
             string name = product.Name.Replace("'", "\\'");
             string description = product.Description.Replace("'", "\\'");
             ProductCategory category = product.Category;
-            string image = product.ImageName;
+            string image = product.ImageName.Replace("'", "\\'");
             string price = product.Price.ToString().Replace(',', '.');
             int quantity = product.Quantity;
 
@@ -93,7 +93,7 @@ namespace NetworkEquipmentStore.Models.DAO
             string name = product.Name.Replace("'", "\\'");
             string description = product.Description.Replace("'", "\\'");
             ProductCategory category = product.Category;
-            string image = product.ImageName;
+            string image = product.ImageName.Replace("'", "\\'"); ;
             string price = product.Price.ToString().Replace(',', '.');
             int quantity = product.Quantity;
 
@@ -105,8 +105,8 @@ namespace NetworkEquipmentStore.Models.DAO
 
         public void DeleteProductByID(int productID)
         {
-            string queryShopProductsList = $"DELETE FROM ShopProductsList WHERE product_id = {productID};";
-            Database.Execute(queryShopProductsList);
+            string cartLineQuery = $"DELETE FROM ShopCartLine WHERE product_id = {productID};";
+            Database.Execute(cartLineQuery);
             string query = $"DELETE FROM ShopProduct WHERE id = {productID};";
             Database.Execute(query);
         }

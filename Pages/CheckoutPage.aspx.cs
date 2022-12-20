@@ -25,8 +25,6 @@ namespace NetworkEquipmentStore.Pages
                     if (Request.Form["SubmitOrder"] != null && IsCheckoutFormValid())
                     {
                         OnSubmitOrder();
-                        CheckoutForm.Visible = false;
-                        PostbackForm.Visible = true;
                     }
                 }
                 else
@@ -44,35 +42,27 @@ namespace NetworkEquipmentStore.Pages
         protected void OnSubmitOrder()
         {
             User user = SessionHelper.GetUser(Session);
-            Cart cart = SessionHelper.GetCart(Session);
 
             string name = Name.Value;
             string phone = Phone.Value;
             string email = Email.Value;
             string address = Address.Value;
 
-            Order newOrder = new Order
-            {
-                ID = 0,
-                User = user,
-                ProductsInfo = cart.Lines,
-                Date = DateTime.Now,
-                CustomerName = name,
-                CustomerPhone = phone,
-                CustomerEmail = email,
-                CustomerAddress = address
-            };
-
             try
             {
-                repository.InsertOrder(newOrder);
-                cart.Clear();
-                repository.UpdateCart(cart, user);
-                Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
+                repository.InsertOrder(user, name, phone, email, address);
+                user.Cart.Clear();
+                repository.UpdateUser(user);
+
+                CheckoutForm.Visible = false;
+                PostbackForm.Visible = true;
             }
             catch (InvalidOperationException exception)
             {
                 ShowError(exception.Message);
+
+                CheckoutForm.Visible = true;
+                PostbackForm.Visible = false;
             }
         }
 
@@ -122,6 +112,11 @@ namespace NetworkEquipmentStore.Pages
             if (!Regex.IsMatch(email, @"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"))
             {
                 ShowError("неверный адрес электронной почты");
+                return false;
+            }
+            else if (email.Length > 512)
+            {
+                ShowError("длина адреса электронной почты больше 512 символов");
                 return false;
             }
             else

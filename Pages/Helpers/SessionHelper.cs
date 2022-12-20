@@ -1,5 +1,4 @@
 ﻿using NetworkEquipmentStore.Models;
-using NetworkEquipmentStore.Models.Repository;
 using System;
 using System.Web.SessionState;
 
@@ -7,8 +6,7 @@ namespace NetworkEquipmentStore.Pages.Helpers
 {
     public enum SessionKey
     {
-        USER,
-        CART
+        USER
     }
 
     public static class SessionHelper
@@ -37,33 +35,9 @@ namespace NetworkEquipmentStore.Pages.Helpers
             }
         }
 
-        public static void AuthorizeUser(HttpSessionState session, User user)
-        {
-            Set(session, SessionKey.USER, user);
-            
-            if (user.Level == PermissionsLevel.CLIENT)
-            {
-                Repository repository = new Repository();
-                Cart userCart = repository.GetUserCart(user);
-                
-                Set(session, SessionKey.CART, userCart);
-            }
-        }
+        public static void AuthorizeUser(HttpSessionState session, User user) => Set(session, SessionKey.USER, user);
+        public static void RemoveUser(HttpSessionState session) => Remove(session, SessionKey.USER);
 
-        public static void RemoveUser(HttpSessionState session)
-        {
-            Remove(session, SessionKey.USER);
-            Remove(session, SessionKey.CART);
-        }
-
-        public static User GetUser(HttpSessionState session)
-        {
-            return Get<User>(session, SessionKey.USER);
-        }
-
-        public static Cart GetCart(HttpSessionState session)
-        {
-            return Get<Cart>(session, SessionKey.CART);
-        }
+        public static User GetUser(HttpSessionState session) => Get<User>(session, SessionKey.USER);
     }
 }

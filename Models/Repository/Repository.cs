@@ -9,34 +9,33 @@ namespace NetworkEquipmentStore.Models.Repository
     {
         private readonly UserDAO userDAO = new UserDAO();
         private readonly ProductDAO productDAO = new ProductDAO();
-        private readonly CartDAO cartDAO = new CartDAO();
         private readonly OrderDAO orderDAO = new OrderDAO();
 
 
 
+        public User GetUserByID(int id) => userDAO.GetUserByID(id);
+        public User GetUserByName(string name) => userDAO.GetUserByName(name);
         public User GetUserByLogin(string login) => userDAO.GetUserByLogin(login);
         public IEnumerable<User> GetAllUsers() => userDAO.GetAllUsers();
         
         public User RegisterUser(User user)
         {
-            if (GetUserByLogin(user.Login) != null)
+            if (GetUserByName(user.Name) != null)
+            {
+                throw new InvalidOperationException("пользователь с таким именем уже существует");
+            }
+            else if (GetUserByLogin(user.Login) != null)
             {
                 throw new InvalidOperationException("пользователь с таким логином уже существует");
             }
             else
             {
-                user = userDAO.InsertUser(user);
-                cartDAO.InsertCart(user);
-
-                return user;
+                return userDAO.InsertUser(user);
             }
         }
 
-        public void DeleteUser(User user)
-        {
-            cartDAO.DeleteCart(user);
-            userDAO.DeleteUser(user);
-        }
+        public User UpdateUser(User user) => userDAO.UpdateUser(user);
+        public void DeleteUser(User user) => userDAO.DeleteUser(user);
 
 
         public Product GetProductByID(int productID) => productDAO.GetProductByID(productID);
@@ -47,48 +46,51 @@ namespace NetworkEquipmentStore.Models.Repository
         public void DeleteProductByID(int id) => productDAO.DeleteProductByID(id);
 
 
-        public Cart GetUserCart(User user) => cartDAO.GetUserCart(user.ID);
-        public Cart UpdateCart(Cart cart, User user) => cartDAO.UpdateCart(cart, user);
-
-
         public IEnumerable<Order> GetAllOrders() => orderDAO.GetAllOrders();
-        public IEnumerable<Order> GetAllOrdersOfUser(User user) => orderDAO.GetAllOrdersOfUser(user.ID);
-        
-        public Order InsertOrder(Order order)
+        public int GetAllOrdersCount(User user = null) => orderDAO.GetAllOrdersCount(user);
+
+        public Order InsertOrder(
+            User user,
+            string customerName, string customerPhone,
+            string customerEmail, string customerAddress
+        )
         {
+            Cart cart = user.Cart;
+
             // Если заказ пустой, то не вставляем его:
-            if (order.ProductsInfo.Count() == 0)
+            if (cart.Lines.Count() == 0)
             {
                 return null;
             }
 
             // Проверка правильности заказа:
-            foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
+            foreach (CartLine cartLine in cart.Lines)
             {
-                Product product = productDAO.GetProductByID(productOrderInfo.Product.ID);
+                Product product = productDAO.GetProductByID(cartLine.Product.ID);
                 int totalQuantity = product.Quantity;
-                int orderQuantity = productOrderInfo.Quantity;
+                int cartQuantity = cartLine.Quantity;
 
-                if (orderQuantity > totalQuantity)
+                if (cartQuantity > totalQuantity)
                 {
-                    throw new InvalidOperationException($"количество товаров '{product.Name}' в заказе больше чем имеется на складе");
+                    throw new InvalidOperationException($"количество товаров '{product.Name}' в корзине больше чем имеется на складе");
                 }
             }
 
             // Обновление данных о продуктах при правильности заказа:
-            foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
+            foreach (CartLine cartLine in cart.Lines)
             {
-                Product product = productDAO.GetProductByID(productOrderInfo.Product.ID);
+                Product product = productDAO.GetProductByID(cartLine.Product.ID);
                 int totalQuantity = product.Quantity;
-                int orderQuantity = productOrderInfo.Quantity;
+                int cartQuantity = cartLine.Quantity;
 
-                product.Quantity = totalQuantity - orderQuantity;
+                product.Quantity = totalQuantity - cartQuantity;
                 productDAO.UpdateProduct(product);
             }
 
-            return orderDAO.InsertOrder(order);
+            return orderDAO.InsertOrder(user.FormOrder(customerName, customerPhone, customerEmail, customerAddress));
         }
 
         public void DeleteOrderByID(int orderID) => orderDAO.DeleteOrderByID(orderID);
+        public void DeleteAllOrders(int? userID = null) => orderDAO.DeleteAllOrders(userID);
     }
 }

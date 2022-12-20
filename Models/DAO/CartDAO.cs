@@ -5,68 +5,107 @@ using System.Data;
 
 namespace NetworkEquipmentStore.Models.DAO
 {
-    public class CartDAO
+    internal class CartDAO
     {
-        public Cart GetUserCart(int userID)
+        private List<CartLine> GetAllCartLines(int cartID)
         {
-            string query = $"SELECT id, order_date FROM ShopOrder WHERE user_id = {userID} AND is_cart = TRUE;";
+            string query = $"" +
+                $"SELECT" +
+                $"  sp.id AS id," +
+                $"  name," +
+                $"  description," +
+                $"  category," +
+                $"  image," +
+                $"  price," +
+                $"  sp.quantity AS total_quantity, " +
+                $"  scl.quantity AS cart_quantity " +
+                $"FROM ShopProduct AS sp JOIN ShopCartLine AS scl ON sp.id = scl.product_id " +
+                $"WHERE scl.cart_id = {cartID};";
+
+            DataTable table = Database.Request(query);
+            List<CartLine> cartLines = new List<CartLine>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                CartLine cartLine = new CartLine
+                {
+                    Product = new Product
+                    {
+                        ID = int.Parse(row["id"].ToString()),
+                        Name = row["name"].ToString(),
+                        Description = row["description"].ToString(),
+                        Category = (ProductCategory)Enum.Parse(typeof(ProductCategory), row["category"].ToString()),
+                        ImageName = row["image"].ToString(),
+                        Price = decimal.Parse(row["price"].ToString()),
+                        Quantity = int.Parse(row["total_quantity"].ToString())
+                    },
+                    Quantity = int.Parse(row["cart_quantity"].ToString())
+                };
+
+                cartLines.Add(cartLine);
+            }
+
+            return cartLines;
+        }
+
+        internal Cart GetUserCart(int userID)
+        {
+            string userQuery = $"SELECT cart_id FROM ShopUser WHERE id = {userID};";
+            int cartID = int.Parse(Database.Request(userQuery).Rows[0]["cart_id"].ToString());
+            string query = $"SELECT * FROM ShopCart WHERE id = {cartID};";
             DataTable table = Database.Request(query);
 
-            int id = int.Parse(table.Rows[0]["id"].ToString());
-            DateTime data = DateTime.Parse(table.Rows[0]["order_date"].ToString());
-            OrderDAO orderDAO = new OrderDAO();
-            IEnumerable<ProductOrderInfo> products = orderDAO.GetAllProductsFromOrder(id);
+            DateTime lastUpdate = DateTime.Parse(table.Rows[0]["last_update"].ToString());
+            List<CartLine> cartLines = GetAllCartLines(cartID);
 
             return new Cart
             {
-                Lines = products,
-                LastUpdatedTime = data
+                ID = cartID,
+                LastUpdate = lastUpdate,
+                Lines = cartLines
             };
         }
 
-        public Cart InsertCart(User user)
+        internal Cart InsertCart(Cart cart)
         {
-            int userID = user.ID;
-            DateTime date = DateTime.Now;
+            DateTime lastUpdate = DateTime.Now;
 
-            string query = $"INSERT INTO ShopOrder(user_id, order_date, is_cart) VALUES ({userID}, '{date}', TRUE);";
-            Database.Execute(query);
+            string query = $"INSERT INTO ShopCart(last_update) VALUES ('{lastUpdate}') RETURNING id;";
+            int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
 
-            return new Cart();
+            cart.ID = id;
+            return cart;
         }
 
-        public Cart UpdateCart(Cart cart, User user)
+        internal Cart UpdateCart(Cart cart)
         {
-            int userID = user.ID;
-            DateTime date = DateTime.Now;
+            int id = cart.ID;
+            DateTime lastUpdate = DateTime.Now;
 
-            string query = $"UPDATE ShopOrder SET order_date = '{date}' WHERE user_id = {userID} AND is_cart = TRUE RETURNING id;";
-            int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
-            string clearQuery = $"DELETE FROM ShopProductsList WHERE order_id = {id};";
+            string query = $"UPDATE ShopCart SET last_update = '{lastUpdate}' WHERE id = {id};";
+            Database.Execute(query);
+            string clearQuery = $"DELETE FROM ShopCartLine WHERE cart_id = {id};";
             Database.Execute(clearQuery);
 
-            foreach (ProductOrderInfo line in cart.Lines)
+            foreach (CartLine cartLine in cart.Lines)
             {
-                int productID = line.Product.ID;
-                int quantity = line.Quantity;
+                int productID = cartLine.Product.ID;
+                int quantity = cartLine.Quantity;
 
-                string productsListQuery = $"INSERT INTO ShopProductsList(order_id, product_id, quantity) VALUES ({id}, {productID}, {quantity});";
-                Database.Execute(productsListQuery);
+                string cartLineQuery = $"INSERT INTO ShopCartLine(cart_id, product_id, quantity) VALUES ({id}, {productID}, {quantity});";
+                Database.Execute(cartLineQuery);
             }
 
             return cart;
         }
 
-        public void DeleteCart(User user)
+        internal void DeleteCart(Cart cart)
         {
-            int userID = user.ID;
+            int id = cart.ID;
 
-            string orderIDQuery = $"SELECT id FROM ShopOrder WHERE user_id = {userID} AND is_cart = TRUE;";
-            int orderID = int.Parse(Database.Request(orderIDQuery).Rows[0]["id"].ToString());
-
-            string productsListQuery = $"DELETE FROM ShopProductsList WHERE order_id = {orderID};";
-            Database.Execute(productsListQuery);
-            string query = $"DELETE FROM ShopOrder WHERE id = ${orderID};";
+            string cartLineQuery = $"DELETE FROM ShopCartLine WHERE cart_id = {id};";
+            Database.Execute(cartLineQuery);
+            string query = $"DELETE FROM ShopCart WHERE id = {id};";
             Database.Execute(query);
         }
     }

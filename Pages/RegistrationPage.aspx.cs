@@ -2,6 +2,7 @@
 using NetworkEquipmentStore.Models.Repository;
 using NetworkEquipmentStore.Pages.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web.Routing;
 using System.Web.UI;
@@ -43,7 +44,14 @@ namespace NetworkEquipmentStore.Pages
                     Name = username,
                     Level = PermissionsLevel.CLIENT,
                     Login = login,
-                    PasswordHash = passwordHash
+                    PasswordHash = passwordHash,
+                    IsBanned = false,
+                    Cart = new Cart
+                    {
+                        ID = 0,
+                        LastUpdate = DateTime.Now,
+                        Lines = new List<CartLine>()
+                    }
                 };
 
                 newUser = repository.RegisterUser(newUser);

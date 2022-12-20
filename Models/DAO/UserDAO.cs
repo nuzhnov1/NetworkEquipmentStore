@@ -7,7 +7,10 @@ namespace NetworkEquipmentStore.Models.DAO
 {
     public class UserDAO
     {
-        internal User GetUserByID(int id)
+        private readonly CartDAO CartDAO = new CartDAO();
+
+
+        public User GetUserByID(int id)
         {
             string query = $"SELECT * FROM ShopUser WHERE id = {id};";
             DataTable table = Database.Request(query);
@@ -25,7 +28,34 @@ namespace NetworkEquipmentStore.Models.DAO
                 Name = row["name"].ToString(),
                 Level = (PermissionsLevel)Enum.Parse(typeof(PermissionsLevel), row["level"].ToString()),
                 Login = row["login"].ToString(),
-                PasswordHash = row["password_hash"].ToString()
+                PasswordHash = row["password_hash"].ToString(),
+                IsBanned = bool.Parse(row["is_banned"].ToString()),
+                Cart = CartDAO.GetUserCart(id)
+            };
+        }
+
+        public User GetUserByName(string name)
+        {
+            string query = $"SELECT * FROM ShopUser WHERE name = '{name}';";
+            DataTable table = Database.Request(query);
+
+            if (table.Rows.Count == 0)
+            {
+                return null;
+            }
+
+            DataRow row = table.Rows[0];
+            int id = int.Parse(row["id"].ToString());
+
+            return new User
+            {
+                ID = id,
+                Name = name,
+                Level = (PermissionsLevel)Enum.Parse(typeof(PermissionsLevel), row["level"].ToString()),
+                Login = row["login"].ToString(),
+                PasswordHash = row["password_hash"].ToString(),
+                IsBanned = bool.Parse(row["is_banned"].ToString()),
+                Cart = CartDAO.GetUserCart(id)
             };
         }
 
@@ -40,14 +70,17 @@ namespace NetworkEquipmentStore.Models.DAO
             }
 
             DataRow row = table.Rows[0];
+            int id = int.Parse(row["id"].ToString());
 
             return new User
             {
-                ID = int.Parse(row["id"].ToString()),
+                ID = id,
                 Name = row["name"].ToString(),
                 Level = (PermissionsLevel)Enum.Parse(typeof(PermissionsLevel), row["level"].ToString()),
                 Login = login,
-                PasswordHash = row["password_hash"].ToString()
+                PasswordHash = row["password_hash"].ToString(),
+                IsBanned = bool.Parse(row["is_banned"].ToString()),
+                Cart = CartDAO.GetUserCart(id)
             };
         }
 
@@ -59,13 +92,16 @@ namespace NetworkEquipmentStore.Models.DAO
 
             foreach (DataRow row in table.Rows)
             {
+                int id = int.Parse(row["id"].ToString());
                 User user = new User
                 {
-                    ID = int.Parse(row["id"].ToString()),
+                    ID = id,
                     Name = row["name"].ToString(),
                     Level = (PermissionsLevel)Enum.Parse(typeof(PermissionsLevel), row["level"].ToString()),
                     Login = row["login"].ToString(),
-                    PasswordHash = row["password_hash"].ToString()
+                    PasswordHash = row["password_hash"].ToString(),
+                    IsBanned = bool.Parse(row["is_banned"].ToString()),
+                    Cart = CartDAO.GetUserCart(id)
                 };
 
                 users.Add(user);
@@ -79,12 +115,33 @@ namespace NetworkEquipmentStore.Models.DAO
             string name = user.Name.Replace("'", "\\'");
             PermissionsLevel level = user.Level;
             string login = user.Login.Replace("'", "\\'");
-            string PasswordHash = user.PasswordHash.Replace("'", "\\'");
+            string passwordHash = user.PasswordHash.Replace("'", "\\'");
+            bool isBanned = user.IsBanned;
+            Cart cart = CartDAO.InsertCart(user.Cart);
 
-            string query = $"INSERT INTO ShopUser(name, level, login, password_hash) VALUES ('{name}', '{level}', '{login}', '{PasswordHash}') RETURNING id;";
+            string query = $"INSERT INTO ShopUser(name, level, login, password_hash, is_banned, cart_id) VALUES ('{name}', '{level}', '{login}', '{passwordHash}', {isBanned}, {cart.ID}) RETURNING id;";
             int id = int.Parse(Database.Request(query).Rows[0]["id"].ToString());
 
             user.ID = id;
+            user.Cart = cart;
+            return user;
+        }
+
+        public User UpdateUser(User user)
+        {
+            int id = user.ID;
+            string name = user.Name.Replace("'", "\\'");
+            PermissionsLevel level = user.Level;
+            string login = user.Login.Replace("'", "\\'");
+            string passwordHash = user.PasswordHash.Replace("'", "\\'");
+            bool isBanned = user.IsBanned;
+            Cart cart = user.Cart;
+
+            CartDAO.UpdateCart(cart);
+
+            string query = $"UPDATE ShopUser SET name = '{name}', level = '{level}', login = '{login}', password_hash = '{passwordHash}', is_banned = {isBanned} WHERE id = {id};";
+            Database.Execute(query);
+
             return user;
         }
 
@@ -92,10 +149,13 @@ namespace NetworkEquipmentStore.Models.DAO
         {
             int id = user.ID;
 
-            string orderQuery = $"DELETE FROM ShopOrder WHERE user_id = {id};";
-            Database.Execute(orderQuery);
+            OrderDAO orderDAO = new OrderDAO();
+            orderDAO.DeleteAllOrders(user.ID);
+            
             string query = $"DELETE FROM ShopUser WHERE id = {id};";
             Database.Execute(query);
+
+            CartDAO.DeleteCart(user.Cart);
         }
     }
 }

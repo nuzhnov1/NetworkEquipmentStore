@@ -4,66 +4,58 @@ using System.Linq;
 
 namespace NetworkEquipmentStore.Models
 {
+    public class CartLine
+    {
+        public Product Product { get; set; }
+        public int Quantity { get; set; }
+    }
+
     public class Cart
     {
-        private readonly List<ProductOrderInfo> cartLines = new List<ProductOrderInfo>();
-        
-        public DateTime LastUpdatedTime { get; set; }
-        public IEnumerable<ProductOrderInfo> Lines
-        {
-            get => cartLines;
-            set
-            {
-                cartLines.Clear();
-                cartLines.AddRange(value);
-            }
-        }
-        public decimal TotalCost => Lines.Sum(line => line.Product.Price * line.Quantity);
+        public int ID { get; set; }
+        public DateTime LastUpdate { get; set; }
+        public List<CartLine> Lines { get; set; }
+    }
 
+    public static class CartExtensions
+    {
+        public static decimal TotalCost(this Cart cart) => cart.Lines.Sum(line => line.Product.Price * line.Quantity);
 
-        public Cart() {}
-        public Cart(IEnumerable<ProductOrderInfo> cartLines) => this.cartLines.AddRange(cartLines);
-
-
-        public bool IsInCart(Product product) => cartLines
+        public static bool IsInCart(this Cart cart, Product product) => cart.Lines
             .Where(l => l.Product.ID == product.ID)
             .Count() > 0;
 
-        public void AddLine(Product product, int quantity)
+        public static void AddLine(this Cart cart, CartLine cartLine)
         {
-            ProductOrderInfo line = cartLines
-                .Where(l => l.Product.ID == product.ID)
+            CartLine line = cart.Lines
+                .Where(l => l.Product.ID == cartLine.Product.ID)
                 .FirstOrDefault();
 
             if (line != null)
             {
-                cartLines.Remove(line);
+                cart.Lines.Remove(line);
             }
 
-            cartLines.Add(new ProductOrderInfo
-            {
-                Product = product,
-                Quantity = quantity
-            });
+            cart.Lines.Add(cartLine);
         }
 
-        public void AddOneProduct(int productID)
+        public static void AddOneProduct(this Cart cart, int productID)
         {
-            ProductOrderInfo line = cartLines
+            CartLine line = cart.Lines
                 .Where(l => l.Product.ID == productID)
                 .FirstOrDefault();
-            
+
             line.Quantity += 1;
         }
 
-        public void RemoveLine(int productID)
+        public static void RemoveLine(this Cart cart, int productID)
         {
-            cartLines.RemoveAll(l => l.Product.ID == productID);
+            cart.Lines.RemoveAll(l => l.Product.ID == productID);
         }
 
-        public void RemoveOneProduct(int productID)
+        public static void RemoveOneProduct(this Cart cart, int productID)
         {
-            ProductOrderInfo line = cartLines
+            CartLine line = cart.Lines
                 .Where(l => l.Product.ID == productID)
                 .FirstOrDefault();
 
@@ -71,13 +63,13 @@ namespace NetworkEquipmentStore.Models
 
             if (line.Quantity == 0)
             {
-                cartLines.Remove(line);
+                cart.Lines.Remove(line);
             }
         }
 
-        public void Clear()
+        public static void Clear(this Cart cart)
         {
-            cartLines.Clear();
+            cart.Lines.Clear();
         }
     }
 }
