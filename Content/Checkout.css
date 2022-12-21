@@ -1,0 +1,56 @@
+﻿div.checkout-form {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+div.checkout-form span, div.checkout-form input {
+    display: block;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+div.checkout-form span {
+    width: 100%;
+    font-size: large;
+    font-weight: bold;
+}
+
+div.checkout-form button[type=submit] {
+    display: block;
+    text-align: center;
+    padding: 0 20px;
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    text-decoration: none;
+    border: none;
+    border-radius: 100px;
+    background-color: blue;
+}
+
+div.checkout-form button[type=submit]:hover {
+    background-color: aqua;
+}
+
+div.postback-form {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+div.postback-form span {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+div.postback-form span:last-child {
+    margin-bottom: 0;
+}

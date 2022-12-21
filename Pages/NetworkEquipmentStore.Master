@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/Content/Common.css" />
     <link rel="stylesheet" href="/Content/Products.css" />
     <link rel="stylesheet" href="/Content/Product.css" />
+    <link rel="stylesheet" href="/Content/Cart.css" />
+    <link rel="stylesheet" href="/Content/Checkout.css" />
     <link rel="stylesheet" href="/Content/Pages.css" />
     <link rel="stylesheet" href="/Content/Categories.css" />
     <link rel="stylesheet" href="/Content/Authorization.css" />

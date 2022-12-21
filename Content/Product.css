@@ -5,21 +5,13 @@
     padding: 10px;
 }
 
-div#product-form span {
+div#product-form span, div#product-form textarea {
     width: 100%;
     display: block;
     text-align: left;
     margin-bottom: 10px;
     font-size: large;
     font-weight: bold;
-}
-
-div#product-form textarea {
-    width: 100%;
-    display: block;
-    text-align: left;
-    margin-bottom: 10px;
-    font-size: large;
     resize: none;
 }
 

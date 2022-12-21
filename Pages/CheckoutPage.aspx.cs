@@ -18,6 +18,7 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
+            // Если пользователь - не клиент, то перенаправляем его на главную страницу
             if (user != null && user.Level == PermissionsLevel.CLIENT)
             {
                 if (IsPostBack)
@@ -50,12 +51,22 @@ namespace NetworkEquipmentStore.Pages
 
             try
             {
-                repository.InsertOrder(user, name, phone, email, address);
-                user.Cart.Clear();
-                repository.UpdateUser(user);
+                if (user.Cart.Lines.Count > 0)
+                {
+                    repository.InsertOrder(user, name, phone, email, address);
+                    user.Cart.Clear();
+                    repository.UpdateUser(user);
 
-                CheckoutForm.Visible = false;
-                PostbackForm.Visible = true;
+                    CheckoutForm.Visible = false;
+                    PostbackForm.Visible = true;
+                }
+                else
+                {
+                    ShowError("корзина для заказа пуста");
+
+                    CheckoutForm.Visible = true;
+                    PostbackForm.Visible = false;
+                }
             }
             catch (InvalidOperationException exception)
             {
@@ -79,9 +90,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("не указано ФИО");
                 return false;
             }
-            else if (name.Length > 100)
+            else if (name.Length > 60)
             {
-                ShowError("ФИО больше 100 символов");
+                ShowError("ФИО больше 60 символов");
                 return false;
             }
             else
@@ -114,9 +125,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("неверный адрес электронной почты");
                 return false;
             }
-            else if (email.Length > 512)
+            else if (email.Length > 128)
             {
-                ShowError("длина адреса электронной почты больше 512 символов");
+                ShowError("длина адреса электронной почты больше 128 символов");
                 return false;
             }
             else
@@ -134,9 +145,9 @@ namespace NetworkEquipmentStore.Pages
                 ShowError("адрес не указан");
                 return false;
             }
-            else if (address.Length > 1000)
+            else if (address.Length > 512)
             {
-                ShowError("адрес содержит больше 1000 символов");
+                ShowError("адрес содержит больше 512 символов");
                 return false;
             }
             else
@@ -145,9 +156,9 @@ namespace NetworkEquipmentStore.Pages
             }
         }
 
-        private void ShowError(string status)
+        private void ShowError(string message)
         {
-            ErrorLabel.Text = status;
+            ErrorLabel.Text = $"Ошибка: {message}!";
             ErrorLabel.ForeColor = Color.Red;
         }
     }

@@ -1,4 +1,10 @@
-﻿h1 {
+﻿div#content-root {
+    width: 100%;
+    display: table;
+    border-bottom: 3px solid #111;
+}
+
+h1 {
     text-align: center;
     border-bottom: 3px solid #111;
     margin: 0;
@@ -7,7 +13,7 @@
 
 span#empty-label {
     width: 100%;
-    display: table;
+    display: block;
     text-align: center;
     font-style: oblique;
     font-size: xx-large;
@@ -15,10 +21,13 @@ span#empty-label {
     margin: 5% 0;
 }
 
-div#content-root {
+span#top-label {
     width: 100%;
-    display: table;
-    border-bottom: 3px solid #111;
+    display: block;
+    text-align: left;
+    font-style: normal;
+    font-size: x-large;
+    font-weight: bold;
 }
 
 div#list-item {
@@ -27,7 +36,6 @@ div#list-item {
 }
 
 div#list-item:last-child {
-    padding: 0 10px 10px 10px;
     border: none;
 }
 
@@ -40,14 +48,35 @@ div#list-item span.product-added {
 div#list-item button {
     display: block;
     border: none;
+    padding: 5px;
     background: inherit;
     color: white;
     font-style: oblique;
     font-size: large;
     font-weight: normal;
     cursor: pointer;
+    background-color: blue;
+    border-radius: 100px;
 }
 
 div#list-item button:hover {
-    color: aqua;
+    background-color: aqua;
+}
+
+table {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+    border: 2px solid #111;
+}
+
+tr {
+    border-bottom: 2px solid #111;
+    background-color: dimgray;
+}
+
+td, th {
+    width: 100%;
+    padding: 0;
+    border-right: 2px solid #111;
 }

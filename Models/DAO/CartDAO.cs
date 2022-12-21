@@ -96,6 +96,7 @@ namespace NetworkEquipmentStore.Models.DAO
                 Database.Execute(cartLineQuery);
             }
 
+            cart.LastUpdate = lastUpdate;
             return cart;
         }
 

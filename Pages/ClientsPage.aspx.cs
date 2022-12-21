@@ -17,6 +17,7 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
+            // Если пользователь - не админ, то перенаправляем его на главную страницу
             if (user != null && user.Level == PermissionsLevel.ADMIN)
             {
                 if (IsPostBack)
@@ -72,7 +73,7 @@ namespace NetworkEquipmentStore.Pages
 
             IEnumerable<User> users = repository.GetAllUsers();
 
-            Response.Write("<table id='users-list'>");
+            Response.Write("<table>");
 
             Response.Write("<tr>");
             Response.Write("<th>Имя пользователя</th>");

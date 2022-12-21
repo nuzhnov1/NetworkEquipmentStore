@@ -1,0 +1,85 @@
+﻿div#cart-root {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+div#cart-root table, span#total-label, a#order-ref {
+    margin-bottom: 10px;
+}
+
+td#quantity-column * {
+    display: inline;
+    margin-right: 2px;
+}
+
+td#quantity-column *:last-child {
+    margin: 0;
+}
+
+td button {
+    width: 20px;
+    padding: 0;
+    color: white;
+    font-style: oblique;
+    font-size: medium;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 100px;
+}
+
+button#increment-product {
+    background-color: blue;
+}
+
+button#decrement-product {
+    background-color: darkred;
+}
+
+button#delete-line {
+    width: 50%;
+    margin: 0 25%;
+    background-color: darkred;
+}
+
+button#increment-product:hover, button#decrement-product:hover,
+button#delete-line:hover {
+    background-color: aqua;
+}
+
+span#total-label {
+    width: 100%;
+    display: block;
+    font-size: large;
+    font-weight: bold;
+}
+
+a#order-ref, button[type=submit]#clear-button {
+    width: fit-content;
+    display: block;
+    padding: 5px;
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 100px;
+    border: none;
+}
+
+a#order-ref {
+    background-color: darkgreen;
+}
+
+button[type=submit]#clear-button {
+    background-color: darkgray;
+}
+
+a#order-ref:hover, button[type=submit]#clear-button:hover {
+    background-color: aqua;
+}
