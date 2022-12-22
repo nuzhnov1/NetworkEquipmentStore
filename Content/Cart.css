@@ -18,7 +18,7 @@ td#quantity-column *:last-child {
     margin: 0;
 }
 
-td button {
+div#cart-root td button {
     width: 20px;
     padding: 0;
     color: white;
@@ -31,22 +31,22 @@ td button {
     border-radius: 100px;
 }
 
-button#increment-product {
+div#cart-root td button#increment-product {
     background-color: blue;
 }
 
-button#decrement-product {
+div#cart-root td button#decrement-product {
     background-color: darkred;
 }
 
-button#delete-line {
+div#cart-root td button#delete-line {
     width: 50%;
     margin: 0 25%;
     background-color: darkred;
 }
 
-button#increment-product:hover, button#decrement-product:hover,
-button#delete-line:hover {
+div#cart-root td button#increment-product:hover, div#cart-root td button#decrement-product:hover,
+div#cart-root td button#delete-line:hover {
     background-color: aqua;
 }
 

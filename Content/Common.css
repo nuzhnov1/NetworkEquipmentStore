@@ -75,6 +75,10 @@ tr {
     background-color: dimgray;
 }
 
+tr:first-child {
+    background-color: darkcyan;
+}
+
 td, th {
     width: 100%;
     padding: 0;

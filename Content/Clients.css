@@ -1,0 +1,53 @@
+﻿div#users-root {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+div#users-root td button {
+    width: 60%;
+    margin: 0 20%;
+    padding: 0;
+    color: white;
+    font-style: oblique;
+    font-size: medium;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 100px;
+}
+
+button#unban-user {
+    background-color: blue;
+}
+
+button#ban-user {
+    background-color: darkred;
+}
+
+button#delete-user {
+    width: 50%;
+    margin: 0 25%;
+    background-color: darkred;
+}
+
+a#client-orders {
+    width: 100%;
+    color: white;
+    font-style: oblique;
+    font-size: large;
+    font-weight: normal;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 100px;
+    border: none;
+    background-color: darkgreen;
+}
+
+button#unban-user:hover, button#ban-user:hover,
+button#delete-user:hover, a#client-orders:hover {
+    background-color: aqua;
+}

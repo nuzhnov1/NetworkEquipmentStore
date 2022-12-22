@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="/Content/Product.css" />
     <link rel="stylesheet" href="/Content/Cart.css" />
     <link rel="stylesheet" href="/Content/Checkout.css" />
+    <link rel="stylesheet" href="/Content/Clients.css" />
+    <link rel="stylesheet" href="/Content/Orders.css" />
     <link rel="stylesheet" href="/Content/Pages.css" />
     <link rel="stylesheet" href="/Content/Categories.css" />
     <link rel="stylesheet" href="/Content/Authorization.css" />

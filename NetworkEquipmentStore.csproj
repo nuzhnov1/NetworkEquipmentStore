@@ -117,8 +117,10 @@
     <Content Include="Content\Cart.css" />
     <Content Include="Content\Categories.css" />
     <Content Include="Content\Checkout.css" />
+    <Content Include="Content\Clients.css" />
     <Content Include="Content\Common.css" />
     <Content Include="Content\NetworkEquipmentStore.Master.css" />
+    <Content Include="Content\Orders.css" />
     <Content Include="Content\Pages.css" />
     <Content Include="Content\Product.css" />
     <Content Include="Content\Products.css" />

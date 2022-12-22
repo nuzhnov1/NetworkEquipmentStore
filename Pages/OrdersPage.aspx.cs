@@ -107,6 +107,7 @@ namespace NetworkEquipmentStore.Pages
         {
             User user = SessionHelper.GetUser(Session);
 
+            // Если пришёл ответ от пользователя и этот пользователь - админ, то выполняем его запрос
             if (IsPostBack && user != null && user.Level == PermissionsLevel.ADMIN)
             {
                 if (int.TryParse(Request.Form["RemoveOrder"], out int selectedOrder))
@@ -118,6 +119,7 @@ namespace NetworkEquipmentStore.Pages
                     repository.DeleteAllOrders(SelectedUser?.ID);
                 }
             }
+            // Если пользователь не зарегистрирован, то перенаправляем его на главную страницу
             else if (user == null)
             {
                 Response.RedirectPermanent(RouteTable.Routes.GetVirtualPath(null, null).VirtualPath);
@@ -255,7 +257,7 @@ namespace NetworkEquipmentStore.Pages
 
             foreach (Order order in SelectedOrders)
             {
-                Response.Write("<div id='order-item'>");
+                Response.Write("<div id='list-item'>");
 
                 if (currentUser.Level == PermissionsLevel.ADMIN && SelectedUser == null)
                 {
@@ -276,21 +278,21 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write($"<p style='font-weight: bold'>Адрес доставки:<span style='font-weight: normal'> {order.CustomerAddress}</span></p>");
                 Response.Write("</div>");
 
-                Response.Write("<p>Список товаров:</p>");
-                Response.Write("<table id='order-products'>");
+                Response.Write("<p style='font-weight: bold'>Список товаров:</p>");
+                Response.Write("<table>");
                 Response.Write("<tr>");
-                Response.Write("<th>Наименование товара</th>");
-                Response.Write("<th>Категория товара</th>");
-                Response.Write("<th>Цена товара на момент покупки</th>");
-                Response.Write("<th>Количество купленного товара</th>");
+                Response.Write("<th style='width: 40%'>Наименование товара</th>");
+                Response.Write("<th style='width: 10%'>Категория товара</th>");
+                Response.Write("<th style='width: 25%'>Цена товара на момент покупки</th>");
+                Response.Write("<th style='width: 25%'>Количество купленного товара</th>");
                 Response.Write("</tr>");
                 foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
                 {
                     Response.Write("<tr>");
-                    Response.Write($"<td>{productOrderInfo.ProductName}</td>");
-                    Response.Write($"<td>{productOrderInfo.ProductCategory.ToWebRepresentation()}</td>");
-                    Response.Write($"<td>{productOrderInfo.ProductPrice:c}</td>");
-                    Response.Write($"<td>{productOrderInfo.Quantity}</td>");
+                    Response.Write($"<td style='width: 40%'>{productOrderInfo.ProductName}</td>");
+                    Response.Write($"<td style='width: 10%'>{productOrderInfo.ProductCategory.ToWebRepresentation()}</td>");
+                    Response.Write($"<td style='width: 25%'>{productOrderInfo.ProductPrice:c}</td>");
+                    Response.Write($"<td style='width: 25%'>{productOrderInfo.Quantity}</td>");
                     Response.Write("</tr>");
                 }
                 Response.Write("</table>");
@@ -298,9 +300,7 @@ namespace NetworkEquipmentStore.Pages
 
                 if (currentUser.Level == PermissionsLevel.ADMIN)
                 {
-                    Response.Write("<div id='action-buttons'>");
                     Response.Write($"<button name='RemoveOrder' value='{order.ID}' type='submit'>Удалить заказ</button>");
-                    Response.Write("</div>");
                 }
 
                 Response.Write("</div>");
@@ -315,11 +315,11 @@ namespace NetworkEquipmentStore.Pages
             {
                 if (SelectedUser == null)
                 {
-                    Response.Write("<button name='DeleteAllOrders' type='submit'>Удалить все заказы</button>");
+                    Response.Write("<button id='delete-all-orders' name='DeleteAllOrders' type='submit'>Удалить все заказы</button>");
                 }
                 else
                 {
-                    Response.Write($"<button name='DeleteAllOrders' type='submit'>Удалить все заказы клиента '{SelectedUser.Name}'</button>");
+                    Response.Write($"<button id='delete-all-orders' name='DeleteAllOrders' type='submit'>Удалить все заказы клиента '{SelectedUser.Name}'</button>");
                 }
             }
         }

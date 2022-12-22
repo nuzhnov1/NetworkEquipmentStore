@@ -76,9 +76,12 @@ namespace NetworkEquipmentStore.Pages
             Response.Write("<table>");
 
             Response.Write("<tr>");
-            Response.Write("<th>Имя пользователя</th>");
-            Response.Write("<th>Уровень прав доступа</th>");
-            Response.Write("<th>Забанен ли?</th>");
+            Response.Write("<th style='width: 30%'>Имя пользователя</th>");
+            Response.Write("<th style='width: 10%'>Уровень прав доступа</th>");
+            Response.Write("<th style='width: 10%'>Забанен ли?</th>");
+            Response.Write("<th style='width: 20%'>Ограничение действий пользователя</th>");
+            Response.Write("<th style='width: 10%'>Действия</th>");
+            Response.Write("<th style='width: 20%'>Заказы пользователя</th>");
             Response.Write("</tr>");
 
             foreach (User user in users)
@@ -86,27 +89,33 @@ namespace NetworkEquipmentStore.Pages
                 string isBannedString = (user.IsBanned) ? "Да" : "Нет";
 
                 Response.Write("<tr>");
-                Response.Write($"<td>{user.Name}</td>");
-                Response.Write($"<td>{user.Level.ToWebRepresentation()}</td>");
-                Response.Write($"<td>{isBannedString}</td>");
+                Response.Write($"<td style='width: 30%'>{user.Name}</td>");
+                Response.Write($"<td style='width: 10%'>{user.Level.ToWebRepresentation()}</td>");
+                Response.Write($"<td style='width: 10%'>{isBannedString}</td>");
                 
                 if (user.Level == PermissionsLevel.CLIENT)
                 {
-                    string ordersPath = RouteTable.Routes.GetVirtualPath(null, "orders",
-                        new RouteValueDictionary() { { "username", user.Name } }).VirtualPath;
-
-                    Response.Write($"<td><a href='{ordersPath}'>Заказы клиента</a></td>");
-
                     if (user.IsBanned)
                     {
-                        Response.Write($"<td><button name='UnBanUser' value='{user.Name}' type='submit'>Разбанить</button></td>");
+                        Response.Write($"<td style='width: 20%'><button id='unban-user' name='UnBanUser' value='{user.Name}' type='submit'>Разбанить</button></td>");
                     }
                     else
                     {
-                        Response.Write($"<td><button name='BanUser' value='{user.Name}' type='submit'>Забанить</button></td>");
+                        Response.Write($"<td style='width: 20%'><button id='ban-user' name='BanUser' value='{user.Name}' type='submit'>Забанить</button></td>");
                     }
 
-                    Response.Write($"<td><button name='RemoveUser' value='{user.Name}' type='submit'>Удалить</button></td>");
+                    Response.Write($"<td style='width: 10%'><button id='delete-user' name='RemoveUser' value='{user.Name}' type='submit'>Удалить</button></td>");
+
+                    string ordersPath = RouteTable.Routes.GetVirtualPath(null, "orders",
+                        new RouteValueDictionary() { { "username", user.Name } }).VirtualPath;
+
+                    Response.Write($"<td style='width: 20%'><a id='client-orders' href='{ordersPath}'>Заказы клиента</a></td>");
+                }
+                else
+                {
+                    Response.Write("<td style='width: 20%' />");
+                    Response.Write("<td style='width: 10%' />");
+                    Response.Write("<td style='width: 20%' />");
                 }
 
                 Response.Write("</tr>");
