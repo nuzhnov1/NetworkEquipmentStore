@@ -281,18 +281,20 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write("<p style='font-weight: bold'>Список товаров:</p>");
                 Response.Write("<table>");
                 Response.Write("<tr>");
-                Response.Write("<th style='width: 40%'>Наименование товара</th>");
+                Response.Write("<th style='width: 30%'>Наименование товара</th>");
                 Response.Write("<th style='width: 10%'>Категория товара</th>");
-                Response.Write("<th style='width: 25%'>Цена товара на момент покупки</th>");
-                Response.Write("<th style='width: 25%'>Количество купленного товара</th>");
+                Response.Write("<th style='width: 20%'>Цена товара на момент покупки</th>");
+                Response.Write("<th style='width: 20%'>Количество купленного товара</th>");
+                Response.Write("<th style='width: 20%'>Общая цена товаров</th>");
                 Response.Write("</tr>");
                 foreach (ProductOrderInfo productOrderInfo in order.ProductsInfo)
                 {
                     Response.Write("<tr>");
-                    Response.Write($"<td style='width: 40%'>{productOrderInfo.ProductName}</td>");
+                    Response.Write($"<td style='width: 30%'>{productOrderInfo.ProductName}</td>");
                     Response.Write($"<td style='width: 10%'>{productOrderInfo.ProductCategory.ToWebRepresentation()}</td>");
-                    Response.Write($"<td style='width: 25%'>{productOrderInfo.ProductPrice:c}</td>");
-                    Response.Write($"<td style='width: 25%'>{productOrderInfo.Quantity}</td>");
+                    Response.Write($"<td style='width: 20%'>{productOrderInfo.ProductPrice:c}</td>");
+                    Response.Write($"<td style='width: 20%'>{productOrderInfo.Quantity}</td>");
+                    Response.Write($"<td style='width: 20%'>{(productOrderInfo.ProductPrice * productOrderInfo.Quantity):c}</td>");
                     Response.Write("</tr>");
                 }
                 Response.Write("</table>");

@@ -4,7 +4,7 @@
 <asp:Content runat="server" ContentPlaceHolderID="MainContent">
     <div id="content-root">
         <% Product product = CurrentProduct; %>
-        <h1><%= (product == null) ? "Добавление нового продукта" : $"Изменение продукта '{product.Name}'" %></h1>
+        <h1><%= (product == null) ? "Добавление нового товара" : $"Изменение товара '{product.Name}'" %></h1>
         <div id="product-form">
             <input name="ProductID" type="hidden" value="<%= (product == null) ? "" : product.ID.ToString() %>" />
             <span>Название товара:</span>
@@ -21,7 +21,7 @@
             <span>Количество товара на складе:</span>
             <input name="ProductQuantity" type="number" placeholder="Количество товара" required value="<%= (product == null) ? "" : product.Quantity.ToString() %>"/>
             <asp:Label runat="server" id="StatusLabel" />
-            <button name="SubmitProduct" type="submit"><%= (product == null) ? "Добавить продукт" : "Подтвердить изменения" %></button>
+            <button name="SubmitProduct" type="submit"><%= (product == null) ? "Добавить товар" : "Подтвердить изменения" %></button>
         </div>
     </div>
 </asp:Content>

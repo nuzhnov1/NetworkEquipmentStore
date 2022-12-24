@@ -183,7 +183,7 @@ namespace NetworkEquipmentStore.Pages
             };
 
             repository.UpdateProduct(updatedProduct);
-            ShowStatus("Продукт успешно обновлён!");
+            ShowStatus("Товар успешно обновлён!");
         }
 
         private string SaveFile(HttpPostedFile imageFile)

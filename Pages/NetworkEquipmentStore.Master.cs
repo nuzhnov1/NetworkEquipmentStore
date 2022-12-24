@@ -53,15 +53,15 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write($"<li><a href='{cartHref}'>Корзина</a></li>");
             }
 
-            // Если текущая страница - страница для добавления/обновления продукта, и пользователь - админ
+            // Если текущая страница - страница для добавления/обновления товара, и пользователь - админ
             if (Page is ProductPage && user != null && user.Level == PermissionsLevel.ADMIN)
             {
-                Response.Write($"<li><a href='{nullHref}' class='selected'>Добавить продукт</a></li>");
+                Response.Write($"<li><a href='{nullHref}' class='selected'>Добавить товар</a></li>");
             }
             // Если пользователь - админ, но текущая страница другая
             else if (user != null && user.Level == PermissionsLevel.ADMIN)
             {
-                Response.Write($"<li><a href='{addProductHref}'>Добавить продукт</a></li>");
+                Response.Write($"<li><a href='{addProductHref}'>Добавить товар</a></li>");
             }
 
             // Если текущая страница - страница заказов, и пользователь залогинен
@@ -75,15 +75,15 @@ namespace NetworkEquipmentStore.Pages
                 Response.Write($"<li><a href='{ordersHref}'>Список заказов</a></li>");
             }
 
-            // Если текущая страница - страница списка клиентов, и пользователь - админ
+            // Если текущая страница - страница списка пользователей, и пользователь - админ
             if (Page is ClientsPage && user != null && user.Level == PermissionsLevel.ADMIN)
             {
-                Response.Write($"<li><a href='{nullHref}' class='selected'>Список клиентов</a></li>");
+                Response.Write($"<li><a href='{nullHref}' class='selected'>Список пользователей</a></li>");
             }
             // Если пользователь - админ, но текущая страница другая
             else if (user != null && user.Level == PermissionsLevel.ADMIN)
             {
-                Response.Write($"<li><a href='{clientsHref}'>Список клиентов</a></li>");
+                Response.Write($"<li><a href='{clientsHref}'>Список пользователей</a></li>");
             }
 
             Response.Write("<li id='dropdown'>");
